@@ -9,6 +9,7 @@ struct IFlyBehavior
 {
 	virtual ~IFlyBehavior(){};
 	virtual void Fly() = 0;
+	int m_flyCount = 0;
 };
 
 class FlyWithWings : public IFlyBehavior
@@ -16,7 +17,7 @@ class FlyWithWings : public IFlyBehavior
 public:
 	void Fly() override
 	{
-		cout << "I'm flying with wings!!" << endl;
+		cout << "I'm flying with wings " << m_flyCount << " times!!" << endl;
 	}
 };
 
@@ -104,6 +105,7 @@ public:
 	}
 	void Fly()
 	{
+		(m_flyBehavior->m_flyCount)++;
 		m_flyBehavior->Fly();
 	}
 	void Dance()
@@ -215,6 +217,19 @@ int main()
 
 	RedheadDuck redheadDuck;
 	PlayWithDuck(redheadDuck);
+	redheadDuck.Fly();
+	redheadDuck.Fly();
+	redheadDuck.Fly();
+	redheadDuck.Fly();
+	redheadDuck.Fly();
+	redheadDuck.SetFlyBehavior(make_unique<FlyWithWings>());
+	redheadDuck.Fly();
+	redheadDuck.Fly();
+	redheadDuck.Fly();
+	redheadDuck.Fly();
+	redheadDuck.Fly();
+
+
 
 	RubberDuck rubberDuck;
 	PlayWithDuck(rubberDuck);
