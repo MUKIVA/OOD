@@ -1,0 +1,16 @@
+<svg xmlns='http://www.w3.org/2000/svg' width='1920' height='1080' viewPort='0 0 1920 1080'>
+<line x1 = '245' y1 = '500' x2 = '500' y2 = '20' stroke = 'black' stroke-width = '5'/>
+<line x1 = '500' y1 = '20' x2 = '10' y2 = '20' stroke = 'black' stroke-width = '5'/>
+<line x1 = '10' y1 = '20' x2 = '245' y2 = '500' stroke = 'black' stroke-width = '5'/>
+<line x1 = '650' y1 = '200' x2 = '650' y2 = '20' stroke = 'red' stroke-width = '5'/>
+<line x1 = '650' y1 = '200' x2 = '550' y2 = '200' stroke = 'red' stroke-width = '5'/>
+<line x1 = '550' y1 = '20' x2 = '650' y2 = '20' stroke = 'red' stroke-width = '5'/>
+<line x1 = '550' y1 = '20' x2 = '550' y2 = '200' stroke = 'red' stroke-width = '5'/>
+<ellipse rx='100' ry='200' cx='200' cy='400' stroke='green' stroke-width='5' fill='transparent' />
+<line x1 = '500' y1 = '450' x2 = '500' y2 = '450' stroke = 'pink' stroke-width = '5'/>
+<line x1 = '500' y1 = '450' x2 = '547.553' y2 = '484.549' stroke = 'pink' stroke-width = '5'/>
+<line x1 = '547.553' y1 = '484.549' x2 = '529.389' y2 = '540.451' stroke = 'pink' stroke-width = '5'/>
+<line x1 = '529.389' y1 = '540.451' x2 = '470.611' y2 = '540.451' stroke = 'pink' stroke-width = '5'/>
+<line x1 = '470.611' y1 = '540.451' x2 = '452.447' y2 = '484.549' stroke = 'pink' stroke-width = '5'/>
+<line x1 = '452.447' y1 = '484.549' x2 = '500' y2 = '450' stroke = 'pink' stroke-width = '5'/>
+</svg>

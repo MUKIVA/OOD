@@ -2,6 +2,7 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <functional>
 
 using namespace std;
 
@@ -9,15 +10,32 @@ struct IFlyBehavior
 {
 	virtual ~IFlyBehavior(){};
 	virtual void Fly() = 0;
+};
+
+class CFlyCounter : public IFlyBehavior
+{
+public:
+	void Bump()
+	{
+		++m_flyCount;
+	}
+
+	int GetFlyCount() const
+	{
+		return m_flyCount;
+	}
+
+private:
 	int m_flyCount = 0;
 };
 
-class FlyWithWings : public IFlyBehavior
+class FlyWithWings : public CFlyCounter
 {
 public:
 	void Fly() override
 	{
-		cout << "I'm flying with wings " << m_flyCount << " times!!" << endl;
+		Bump();
+		cout << "I'm flying with wings " << GetFlyCount() << " times!!" << endl;
 	}
 };
 
@@ -105,7 +123,6 @@ public:
 	}
 	void Fly()
 	{
-		(m_flyBehavior->m_flyCount)++;
 		m_flyBehavior->Fly();
 	}
 	void Dance()
@@ -128,8 +145,8 @@ public:
 
 private:
 	unique_ptr<IFlyBehavior> m_flyBehavior;
-	unique_ptr<IQuackBehavior> m_quackBehavior;
 	unique_ptr<IDanceBehavior> m_danceBehavior;
+	unique_ptr<IQuackBehavior> m_quackBehavior;
 };
 
 class MallardDuck : public Duck
@@ -228,8 +245,6 @@ int main()
 	redheadDuck.Fly();
 	redheadDuck.Fly();
 	redheadDuck.Fly();
-
-
 
 	RubberDuck rubberDuck;
 	PlayWithDuck(rubberDuck);
