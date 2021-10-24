@@ -138,6 +138,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
+      <LanguageStandard>stdcpp20</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -151,6 +152,21 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="out.dat" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="CFileInputStream.h" />
+    <ClInclude Include="CFileOutputStream.h" />
+    <ClInclude Include="CMemoryInputStream.h" />
+    <ClInclude Include="CMemoryOutputStream.h" />
+    <ClInclude Include="CodeDecodeGenerator.h" />
+    <ClInclude Include="CompressStreamDecorator.h" />
+    <ClInclude Include="DecodeStreamDecorator.h" />
+    <ClInclude Include="DecompresStreamDecorator.h" />
+    <ClInclude Include="EncodeStreamDecorator.h" />
+    <ClInclude Include="IInputDataStream.h" />
+    <ClInclude Include="IInputDataStreamDecorator.h" />
+    <ClInclude Include="IOutputDataStream.h" />
+    <ClInclude Include="IOutputDataStreamDecorator.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

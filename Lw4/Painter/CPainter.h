@@ -3,6 +3,9 @@
 #include "CPictureDraft.h"
 #include "ICanvas.h"
 
+
+// поправить парс данных
+
 class CPainter
 {
 public:

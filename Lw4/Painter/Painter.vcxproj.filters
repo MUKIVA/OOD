@@ -74,7 +74,7 @@
     <ClCompile Include="stdafx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Painter.cpp">
+    <ClCompile Include="mian.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
