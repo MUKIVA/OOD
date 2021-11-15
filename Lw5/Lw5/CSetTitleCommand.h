@@ -6,9 +6,9 @@
 class CSetTitleCommand : public CAbstractCommand
 {
 public:
-	CSetTitleCommand(IDocument& document, std::istream& is)
+	CSetTitleCommand(IDocument& document, std::string const& newTitle)
 		: m_document(document)
-		, m_in(is)
+		, m_newTitle(newTitle)
 	{
 	}
 
@@ -16,10 +16,6 @@ protected:
 	void DoExecute() override
 	{
 		m_oldTitle = m_document.GetTitle();
-
-		if (!(m_in >> m_newTitle))
-			throw std::invalid_argument("Failed to set new title");
-
 		m_document.SetTitle(m_newTitle);
 	}
 
@@ -32,5 +28,4 @@ private:
 	IDocument& m_document;
 	std::string m_newTitle;
 	std::string m_oldTitle;
-	std::istream& m_in;
 };

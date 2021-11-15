@@ -9,10 +9,12 @@ public:
 
 	static std::string GetHtmlCodeByChar(const std::string& ch)
 	{
-		if (CharToHtmlCode.find(ch) != CharToHtmlCode.end())
-			return ch;
-		else
-			return CharToHtmlCode.at(ch);
+		if (ch == "<")	return "&lt;";
+		if (ch == ">")	return "&gt;";
+		if (ch == "\"")	return "&quot;";
+		if (ch == "'")	return "&apos;";
+		if (ch == "&")	return "&amp;";
+		return ch;
 	}
 
 	static std::string Encode(std::string html)
@@ -35,16 +37,4 @@ public:
 
 		return result;
 	}
-
-private:
-	typedef std::map<std::string, std::string> HtmlMap;
-	static HtmlMap CharToHtmlCode;
-};
-
-CHtmlEncoder::HtmlMap CHtmlEncoder::CharToHtmlCode = {
-	{ "<", "&lt;" },
-	{ ">", "&gt;" },
-	{ "\"", "&quot;" },
-	{ "'", "&apos;" },
-	{ "&", "&amp;" }
 };

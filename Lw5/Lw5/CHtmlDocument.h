@@ -15,6 +15,13 @@ const Path IMAGE_FOLDER = "image";
 class CHtmlDocument : public IDocument
 {
 public:
+
+	CHtmlDocument()
+	{
+		if (std::filesystem::exists(IMAGE_FOLDER))
+			std::filesystem::remove_all(IMAGE_FOLDER);
+	}
+
 	// Вставляет параграф текста в указанную позицию (сдвигая последующие элементы)
 	// Если параметр position не указан, вставка происходит в конец документа
 	std::shared_ptr<IParagraph> InsertParagraph(const std::string& text,
@@ -25,6 +32,9 @@ public:
 			m_items.push_back(CDocumentItem(paragraph));
 		else
 		{
+			if (*position < 0 || *position >= GetItemsCount())
+				throw std::invalid_argument("Invalid position argument");
+
 			auto it = m_items.begin() + *position;
 			m_items.insert(it, CDocumentItem(paragraph));
 		}
@@ -42,18 +52,23 @@ public:
 		Path newImagePath = IMAGE_FOLDER / imageName;
 		newImagePath.replace_extension(path.extension());
 		std::filesystem::create_directory(IMAGE_FOLDER);
-		std::filesystem::copy(path, newImagePath);
-		std::shared_ptr<IImage> image = std::make_shared<CImage>();
+
+		if (std::filesystem::exists(newImagePath))
+			std::filesystem::copy(path, newImagePath);
+
+		std::shared_ptr<IImage> image = std::make_shared<CImage>(width, height, newImagePath);
 		CDocumentItem item(image);
 		if (position == std::nullopt)
 			m_items.push_back(item);
 		else
 		{
+			if (*position < 0 || *position >= GetItemsCount())
+				throw std::invalid_argument("Invalid position argument");
+
 			auto it = m_items.begin() + *position;
 			m_items.insert(it, item);
 		}
 	
-
 		return image;
 	}
 
@@ -71,12 +86,21 @@ public:
 
 	CDocumentItem GetItem(size_t index) override
 	{
+		if (GetItemsCount() == 0 || index > GetItemsCount() - 1)
+			throw std::out_of_range("Out of range");
+
 		return m_items[index];
 	}
 
 	//Удаляет элемент из документа
 	void DeleteItem(size_t index) override
 	{
+		if (GetItemsCount() == 0 || index > GetItemsCount() - 1)
+			throw std::out_of_range("Out of range");
+
+		if (GetItem(index).GetImage() != nullptr)
+			--m_imageCounter;
+
 		m_items.erase(m_items.begin() + index);
 	}
 
@@ -115,25 +139,30 @@ public:
 		m_history.Undo();
 	}
 
-	void ShowItems() override
+	void ShowItems(std::ostream& os) override
 	{
-		std::cout << "Title: " << m_title << std::endl;
+		os << "Title: " << m_title << std::endl;
 		for (size_t i = 0; i < GetItemsCount(); ++i)
 		{
 			auto image = GetItem(i).GetImage();
 			auto paragraph = GetItem(i).GetParagraph();
 			if (image != nullptr)
-				std::cout << i << ". Image: "
+				os << i << ". Image: "
 						  << image->GetWidth() << " "
 						  << image->GetHeight() << " "
 						  << image->GetPath()
 						  << std::endl;
 						
 			if (paragraph != nullptr)
-				std::cout << i << ". Paragraph: "
+				os << i << ". Paragraph: "
 						  << paragraph->GetText()
 						  << std::endl;
 		}
+	}
+
+	void HandleCommand(std::unique_ptr<ICommand>&& command) override
+	{
+		m_history.AddAndExecuteCommand(std::move(command));
 	}
 
 	// Сохраняет документ в формате html. Изображения сохраняются в подкаталог images.

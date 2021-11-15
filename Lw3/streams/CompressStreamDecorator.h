@@ -10,6 +10,15 @@ public:
 	{
 	}
 
+	~CompressStreamDecorator()
+	{
+		if (!m_count == 0)
+		{
+			IOutputDataStreamDecorator::WriteByte(m_count);
+			IOutputDataStreamDecorator::WriteByte(m_currentByte);
+		}
+	}
+
 	void WriteByte(uint8_t data) override
 	{
 		if (m_count == 0)
@@ -27,6 +36,7 @@ public:
 			m_currentByte = data;
 			return;
 		}
+
 		++m_count;
 	}
 

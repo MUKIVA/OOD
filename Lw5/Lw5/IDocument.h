@@ -5,6 +5,7 @@
 #include <optional>
 #include <filesystem>
 #include "IImage.h"
+#include "ICommand.h"
 #include "IParagraph.h"
 #include "CConstDocumentItem.h"
 #include "CDocumentItem.h"
@@ -53,9 +54,9 @@ public:
 	//Отменяет команду редактирования
 	virtual void Undo() = 0;
 
-	virtual void ShowItems() = 0;
+	virtual void ShowItems(std::ostream& os) = 0;
 
-	virtual void HandleCommand(std::unique_ptr<ICommand> command) = 0;
+	virtual void HandleCommand(std::unique_ptr<ICommand>&& command) = 0;
 
 	// Сохраняет документ в формате html. Изображения сохраняются в подкаталог images.
 	// Пути к изображениям указываются относительно пути к сохраняемому HTML файлу
