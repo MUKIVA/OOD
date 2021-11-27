@@ -26,7 +26,7 @@ namespace Document
         public string GetItemInfo()
         {
             if (Image != null)
-                return $"Image: {Image.Width} {Image.Height} {Image.Path}";
+                return $"Image: {Image.Width} {Image.Height} {Image.RefPath}";
 
             if (Paragraph != null)
                 return $"Paragraph: {Paragraph.Text}";

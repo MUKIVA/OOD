@@ -13,10 +13,13 @@ namespace Document
             if (args == null)
                 throw new NullReferenceException("Ivalid args");
 
-            if (args.Count() != 1)
+            if (args.Count() < 1)
                 throw new ArgumentException("Invalid arguments count");
 
-            CAbstractCommand command = new CDocumentSetTitleCommand(document, document.Title, args[0]);
+            string text = "";
+            for (int i = 0; i < args.Count(); ++i) text += $"{args[i]} ";
+
+            CAbstractCommand command = new CDocumentSetTitleCommand(document, document.Title, text);
 
             return command;
         }
@@ -29,7 +32,7 @@ namespace Document
             if (args == null)
                 throw new NullReferenceException("Ivalid args");
 
-            if (args.Count() != 2)
+            if (args.Count() < 2)
                 throw new ArgumentException("Invalid arguments count");
 
             int parsedPosition;
@@ -37,7 +40,13 @@ namespace Document
             if (!int.TryParse(args[0], out parsedPosition) && args[0] != "end")
                 throw new ArgumentException("Failed parse to a position");
 
-            CAbstractCommand command = new CDocumentInsertParagraphCommand(document, args[1], (args[0] == "end") ? null : parsedPosition);
+            string text = "";
+            for (int i = 1; i < args.Count(); ++i) text += $"{args[i]} ";
+
+            CAbstractCommand command = new CDocumentInsertParagraphCommand(
+                document, 
+                text, 
+                (args[0] == "end") ? null : parsedPosition);
 
             return command;
         }
@@ -82,7 +91,7 @@ namespace Document
             if (args == null)
                 throw new NullReferenceException("Ivalid args");
 
-            if (args.Count() != 2)
+            if (args.Count() < 2)
                 throw new ArgumentException("Invalid arguments count");
 
             int position;
@@ -95,7 +104,10 @@ namespace Document
             if (item.Paragraph == null)
                 throw new Exception("Item is not a paragraph");
 
-            CAbstractCommand command = new CDocumentReplaceTextCommand(item.Paragraph, args[1]);
+            string text = "";
+            for (int i = 1; i < args.Count(); ++i) text += $"{args[i]} "; 
+
+            CAbstractCommand command = new CDocumentReplaceTextCommand(item.Paragraph, text);
 
             return command;
         }

@@ -9,7 +9,8 @@ namespace Document
 {
     internal interface IImage
     {
-        string Path { get; }
+        string RefPath { get; }
+        string DocumentPath{ get; }
         int Width { get; }
         int Height { get; }
         void Resize(int width, int height);

@@ -28,7 +28,7 @@ namespace Document
         {
 
             if (_item.Image != null)
-                _document.InsertImage(_item.Image.Path,
+                _document.InsertImage(_item.Image.RefPath,
                     _item.Image.Width, 
                     _item.Image.Height, 
                     (_position == 0 && _document.GetItemsCount() == 0) ? null : _position);

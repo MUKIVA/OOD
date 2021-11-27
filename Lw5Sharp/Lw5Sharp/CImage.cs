@@ -9,18 +9,21 @@ namespace Document
     internal class CImage : IImage
     {
 
-        public CImage(string path, int width, int height)
+        public CImage(string path, string documentPath ,int width, int height)
         {
-            Path = path;
+            RefPath = path;
             Height = height;
             Width = width;
+            DocumentPath = documentPath;
         }
 
-        public string Path { get; protected set; }
+        public string RefPath { get; protected set; }
 
         public int Width { get; protected set; }
 
         public int Height { get; protected set; }
+
+        public string DocumentPath { get; protected set; }
 
         public void Resize(int width, int height)
         {

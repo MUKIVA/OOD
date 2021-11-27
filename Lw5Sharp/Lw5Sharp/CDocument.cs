@@ -12,6 +12,16 @@ namespace Document
         public ICommadBuildStrategy? BuildStrategy { private get; set; } = null;
         private CHistory _history = new CHistory();
         private List<CDocumentItem> _items = new List<CDocumentItem>();
+        private const string IMAGE_FOLDER_NAME = "images";
+        private int _imageCount = 0;
+
+        public CDocument()
+        {
+            if (Directory.Exists(IMAGE_FOLDER_NAME))
+                Directory.Delete(IMAGE_FOLDER_NAME, true);
+
+            Directory.CreateDirectory(IMAGE_FOLDER_NAME);
+        }
 
         public bool CanRedo() => _history.CanRedo();
 
@@ -21,6 +31,12 @@ namespace Document
         {
             if (index >= GetItemsCount() || index < 0)
                 throw new IndexOutOfRangeException("Index out of range");
+
+            IImage? item = _items[index].Image;
+            if (item != null)
+            {
+                File.Delete(item.DocumentPath);
+            }
 
             _items.RemoveAt(index);
         }
@@ -40,7 +56,16 @@ namespace Document
 
         public IImage InsertImage(string path, int width, int heigh, int? position = null)
         {
-            CImage image = new CImage(path, width, heigh);
+
+            if (!File.Exists(path))
+                throw new Exception("File is not exists");
+
+            string extension = Path.GetExtension(path); 
+            string documentPath = $"{IMAGE_FOLDER_NAME}/img{_imageCount++}{extension}";
+
+            CImage image = new CImage(path, documentPath, width, heigh);
+
+            File.Copy(path, documentPath);
 
             if (position == null)
             {
@@ -48,7 +73,6 @@ namespace Document
             }
             else
             {
-
                 if (position >= GetItemsCount())
                     throw new IndexOutOfRangeException("Index out of range");
 
@@ -84,7 +108,34 @@ namespace Document
 
         public void Save(string path)
         {
-            throw new NotImplementedException();
+            using (StreamWriter sr = new StreamWriter(path))
+            {
+                sr.WriteLine("<html>");
+                sr.WriteLine($"<h1>{HtmlParser.ParseHtmlString(Title)}</h1>");
+
+                _items.ForEach(item =>
+                {
+                    IParagraph? paragraph = item.Paragraph;
+                    IImage? image = item.Image;
+                    if (image != null)
+                        sr.WriteLine($"<img " +
+                            $"src=\"{HtmlParser.ParseHtmlString(image.DocumentPath)}\" " +
+                            $"width=\"{image.Width}\" " +
+                            $"height=\"{image.Height}\"/ >"
+                        );
+
+                    if (paragraph != null)
+                        sr.WriteLine($"<p>{HtmlParser.ParseHtmlString(paragraph.Text)}</p>");
+                });
+                sr.WriteLine("</html>");
+            }
+
+            string saveFolder = path.Substring(0, path.LastIndexOf('/'));
+
+            Directory.CreateDirectory($"{saveFolder}/{IMAGE_FOLDER_NAME}");
+            string[] images = Directory.GetFileSystemEntries(IMAGE_FOLDER_NAME);
+            foreach (string file in images)
+                File.Copy(file, $"{saveFolder}/{IMAGE_FOLDER_NAME}/{Path.GetFileName(file)}", true);
         }
 
         public void BuildAndSendToHistory(string[]? args)
