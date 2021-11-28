@@ -13,7 +13,7 @@ public:
 		RectD rect = {
 			{ topLeft.x, topLeft.y },
 			bottomRight.x - topLeft.x,
-			topLeft.y - bottomRight.y
+			bottomRight.y - topLeft.y
 		};
 
 		SetFrame(rect);
@@ -51,6 +51,20 @@ public:
 				{ m_topLeft.x, m_bottomRight.y } 
 			});
 		}
+	}
+
+	
+protected:
+	void MovePoints(double offsetX, double offsetY, double ratioWidth, double ratioHeight) override
+	{
+		m_topLeft.x += offsetX;
+		m_topLeft.y += offsetY;
+
+		m_bottomRight.x = (m_bottomRight.x - m_frame->topLeft.x) * ratioWidth + m_frame->topLeft.x;
+		m_bottomRight.y = (m_bottomRight.y - m_frame->topLeft.y) * ratioHeight + m_frame->topLeft.y;
+
+		m_bottomRight.x += offsetX;
+		m_bottomRight.y += offsetY;
 	}
 
 private:

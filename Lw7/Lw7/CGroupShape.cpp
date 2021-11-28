@@ -9,6 +9,9 @@ size_t CGroupShape::GetShapeCount() const
 
 void CGroupShape::InsertShape(std::shared_ptr<IShape> const& shape, size_t position)
 {
+	if (IsParent(shape))
+		throw std::logic_error("Cannot recursive insert");
+
 	if (position >= GetShapeCount())
 	{
 		m_shapes.push_back(shape);
@@ -17,7 +20,7 @@ void CGroupShape::InsertShape(std::shared_ptr<IShape> const& shape, size_t posit
 	{
 		m_shapes.emplace(m_shapes.begin() + position, shape);
 	}
-
+	shape->SetParent(GetGroup());
 }
 
 std::shared_ptr<IShape> CGroupShape::GetShapeAtIndex(size_t index)
@@ -63,7 +66,7 @@ RectD CGroupShape::GetFrame() const
 	double left = *std::min_element(leftCoords.begin(), leftCoords.end());
 	double top = *std::min_element(topCoords.begin(), topCoords.end());
 	double right = *std::max_element(rightCoords.begin(), rightCoords.end());
-	double bottom = *std::max_element(bottomCoords.begin(), rightCoords.end());
+	double bottom = *std::max_element(bottomCoords.begin(), bottomCoords.end());
 
 	RectD rect = {
 		{ left, top },
@@ -74,20 +77,50 @@ RectD CGroupShape::GetFrame() const
 	return rect;
 }
 
+bool CGroupShape::IsParent(std::shared_ptr<IShape> parent)
+{
+	{
+		auto currentNode = GetGroup();
+		while (currentNode != nullptr)
+		{
+			if (currentNode == parent)
+				return true;
+			currentNode = currentNode->GetParent();
+		}
+		return false;
+	}
+}
+
+void CGroupShape::MoveShapes(double widthRatio, double heightRatio, double leftOffset, double topOffset)
+{
+	for (auto& shape : m_shapes)
+	{
+		auto shapeFrame = shape->GetFrame();
+		auto newFrame = RectD{
+			widthRatio * (shapeFrame.topLeft.x + leftOffset),
+			heightRatio * (shapeFrame.topLeft.y + topOffset),
+			shapeFrame.width * widthRatio,
+			shapeFrame.height * heightRatio
+		};
+		shape->SetFrame(newFrame);
+	}
+}
+
 void CGroupShape::SetFrame(const RectD& rect)
 {
 	auto oldFrame = GetFrame();
 	auto widthRatio = rect.width / oldFrame.width;
 	auto heightRatio = rect.height / oldFrame.height;
-	auto leftOffset = oldFrame.topLeft.x - rect.topLeft.x;
-	auto topOffset = oldFrame.topLeft.y - rect.topLeft.y;
+	auto leftOffset = rect.topLeft.x - oldFrame.topLeft.x;
+	auto topOffset = rect.topLeft.y - oldFrame.topLeft.y;
 
-	for (auto& shape : m_shapes)
-	{
-		auto shapeFrame = shape->GetFrame();
-		auto newFrame = RectD{ widthRatio * (shapeFrame.topLeft.x + leftOffset), heightRatio * (shapeFrame.topLeft.y + topOffset), shapeFrame.width * widthRatio, shapeFrame.height * heightRatio };
-		shape->SetFrame(newFrame);
-	}
+	MoveShapes(widthRatio, heightRatio, leftOffset, topOffset);
+
+	oldFrame = GetFrame();
+	leftOffset = rect.topLeft.x - oldFrame.topLeft.x;
+	topOffset = rect.topLeft.y - oldFrame.topLeft.y;
+	
+	MoveShapes(1, 1, leftOffset, topOffset);
 }
 
 std::shared_ptr<IOutlineStyle> CGroupShape::GetOutlineStyle()
@@ -167,7 +200,7 @@ std::shared_ptr<IGroupShape> CGroupShape::GetGroup()
 
 std::shared_ptr<const IGroupShape> CGroupShape::GetGroup() const
 {
-	return shared_from_this();
+	return GetGroup();
 }
 
 std::shared_ptr<IGroupShape> CGroupShape::GetParent()
@@ -184,3 +217,4 @@ void CGroupShape::SetParent(std::shared_ptr<IGroupShape> parent)
 {
 	m_parent = parent;
 }
+

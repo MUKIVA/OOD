@@ -6,12 +6,16 @@
 #include <algorithm>
 
 
-class CGroupShape : public IGroupShape, std::enable_shared_from_this<CGroupShape>
+class CGroupShape : public IGroupShape, public std::enable_shared_from_this<CGroupShape>
 {
 public:
 
 	CGroupShape(std::vector<std::shared_ptr<IShape>>& shapes)
 		: m_shapes(shapes)
+	{
+	}
+
+	CGroupShape()
 	{
 	}
 
@@ -43,4 +47,8 @@ private:
 	std::shared_ptr<IFillStyle> m_fillStyle = nullptr;
 	std::vector<std::shared_ptr<IShape>> m_shapes;
 	std::shared_ptr<IGroupShape> m_parent = nullptr;
+	
+	bool IsParent(std::shared_ptr<IShape> parent);
+	
+	void MoveShapes(double widthRatio, double heightRatio, double leftOffset, double topOffset);
 };

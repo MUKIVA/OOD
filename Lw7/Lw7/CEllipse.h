@@ -44,6 +44,20 @@ public:
 
 	}
 
+protected:
+	void MovePoints(double offsetX, double offsetY, double ratioWidth, double ratioHeight) override
+	{
+		m_center.x = (m_center.x - m_frame->topLeft.x) * ratioWidth + m_frame->topLeft.x;
+		m_center.y = (m_center.y - m_frame->topLeft.y) * ratioHeight + m_frame->topLeft.y;
+
+		m_center.x += offsetX;
+		m_center.y += offsetY;
+
+
+		m_height *= ratioHeight;
+		m_width *= ratioWidth;
+	}
+
 private:
 	Point<double> m_center;
 	double m_width;

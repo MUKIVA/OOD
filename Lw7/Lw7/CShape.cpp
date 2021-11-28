@@ -2,12 +2,21 @@
 
 RectD CShape::GetFrame() const
 {
-	return m_frame;
+	return *m_frame;
 }
 
 void CShape::SetFrame(const RectD& rect)
 {
-	m_frame = rect;
+	
+	if (m_frame != nullptr)
+	{
+		double offsetX = rect.topLeft.x - (*m_frame).topLeft.x;
+		double offsetY = rect.topLeft.y - (*m_frame).topLeft.y;
+		double ratioWidth = rect.width / (*m_frame).width;
+		double ratioHeight = rect.height / (*m_frame).height;
+		MovePoints(offsetX, offsetY, ratioWidth, ratioHeight);
+	}
+	m_frame = std::make_shared<RectD>(rect);
 }
 
 std::shared_ptr<IOutlineStyle> CShape::GetOutlineStyle()
@@ -54,3 +63,4 @@ void CShape::SetParent(std::shared_ptr<IGroupShape> parent)
 {
 	m_parent = parent;
 }
+

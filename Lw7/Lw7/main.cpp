@@ -45,6 +45,7 @@ int main()
 	
 
 	shared_ptr<IShape> faceOneGroup = make_shared<CGroupShape>(faceOne);
+	faceOneGroup->SetFrame({ { 150, 400 }, 100, 100 });
 
 	// Лицо 2
 	shared_ptr<IShape> face2 = make_shared<CRectangle>(MakeConstDPoint(650, 400), MakeConstDPoint(850, 600));

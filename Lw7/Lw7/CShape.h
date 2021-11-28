@@ -7,10 +7,6 @@
 class CShape : public IShape
 {
 public:
-	CShape()
-		: m_frame(RectD({ { 0, 0 }, 0, 0 }))
-	{
-	}
 
 	RectD GetFrame() const override;
 	void SetFrame(const RectD& rect);
@@ -24,12 +20,15 @@ public:
 	std::shared_ptr<IGroupShape> GetGroup() override;
 	std::shared_ptr<const IGroupShape> GetGroup() const override;
 
-	std::shared_ptr<IGroupShape> GetParent() override;
-	std::shared_ptr<const IGroupShape> GetParent() const override;
-	void SetParent(std::shared_ptr<IGroupShape> parent) override;
+	std::shared_ptr<IGroupShape> GetParent();
+	std::shared_ptr<const IGroupShape> GetParent() const;
+	void SetParent(std::shared_ptr<IGroupShape> parent);
+
+	virtual void MovePoints(double offsetX, double offsetY, double ratioWidth, double ratioHeight) = 0;
+
 
 protected:
-	RectD m_frame;
+	std::shared_ptr<RectD> m_frame = nullptr;
 
 private:
 	std::shared_ptr<IOutlineStyle> m_outlineStyle = std::make_shared<COutlineStyle>();
