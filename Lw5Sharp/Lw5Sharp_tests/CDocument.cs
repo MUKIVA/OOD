@@ -1,8 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Document
 {
@@ -67,7 +66,7 @@ namespace Document
 
             File.Copy(path, documentPath);
 
-            if (position == null)
+            if (position == null || GetItemsCount() == 0 && position == 0)
             {
                 _items.Add(new CDocumentItem(image));
             }
@@ -87,7 +86,9 @@ namespace Document
         {
             CParagraph paragraph = new CParagraph(text);
 
-            if (position == null)
+            Console.WriteLine(position);
+
+            if (position == null || GetItemsCount() == 0 && position == 0)
             {
                 _items.Add(new CDocumentItem(paragraph));
             }

@@ -9,8 +9,17 @@ namespace Document
     internal class CImage : IImage
     {
 
-        public CImage(string path, string documentPath ,int width, int height)
+        private void AssertImageSize(int size)
         {
+            if (size < 0)
+                throw new ArgumentException("Image size can't be negative");
+        }
+
+        public CImage(string path, string documentPath, int width, int height)
+        {
+            AssertImageSize(width);
+            AssertImageSize(height);
+
             RefPath = path;
             Height = height;
             Width = width;
@@ -27,6 +36,9 @@ namespace Document
 
         public void Resize(int width, int height)
         {
+            AssertImageSize(width);
+            AssertImageSize(height);
+
             Width = width;
             Height = height;
         }
