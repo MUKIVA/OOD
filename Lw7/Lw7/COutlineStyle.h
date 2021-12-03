@@ -1,5 +1,7 @@
 #pragma once
 #include "CommonTypes.h"
+#include "IOutlineStyle.h"
+#include <optional>
 
 class COutlineStyle : public IOutlineStyle
 {

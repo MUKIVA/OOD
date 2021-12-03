@@ -110,16 +110,14 @@ RectD CGroupShape::GetFrame() const
 
 bool CGroupShape::IsParent(std::shared_ptr<IShape> parent)
 {
+	auto currentNode = GetGroup();
+	while (currentNode != nullptr)
 	{
-		auto currentNode = GetGroup();
-		while (currentNode != nullptr)
-		{
-			if (currentNode == parent)
-				return true;
-			currentNode = currentNode->GetParent();
-		}
-		return false;
+		if (currentNode == parent)
+			return true;
+		currentNode = currentNode->GetParent();
 	}
+	return false;
 }
 
 void CGroupShape::MoveShapes(double widthRatio, double heightRatio, double leftOffset, double topOffset)
@@ -139,6 +137,9 @@ void CGroupShape::MoveShapes(double widthRatio, double heightRatio, double leftO
 
 void CGroupShape::EnumerateFillStyles(const std::function<void(IFillStyle& style)>& callback) const
 {
+	if (m_shapes.empty())
+		throw std::logic_error("An empty group was encountered");
+
 	for (auto& shape : m_shapes)
 	{
 		callback(*shape->GetFillStyle());
@@ -147,6 +148,9 @@ void CGroupShape::EnumerateFillStyles(const std::function<void(IFillStyle& style
 
 void CGroupShape::EnumerateOutlineStyles(const std::function<void(IOutlineStyle& style)>& callback) const
 {
+	if (m_shapes.empty())
+		throw std::logic_error("An empty group was encountered");
+
 	for (auto& shape : m_shapes)
 	{
 		callback(*shape->GetOutlineStyle());
@@ -172,34 +176,7 @@ void CGroupShape::SetFrame(const RectD& rect)
 
 std::shared_ptr<IOutlineStyle> CGroupShape::GetOutlineStyle()
 {
-	if (m_shapes.empty())
-		throw std::logic_error("Group is empty");
-
-	auto firstElementLineStyle = m_shapes[0]->GetOutlineStyle();
-	bool isEnable = true;
-	bool colorEqual = true;
-	bool lineWidthEqual = true;
-
-	for (auto& shape : m_shapes)
-	{
-		auto shapeLineStyle = shape->GetOutlineStyle();
-		if (firstElementLineStyle->IsEnable() != shapeLineStyle->IsEnable())
-			isEnable = false;
-		if (firstElementLineStyle->GetColor() != shapeLineStyle->GetColor())
-			colorEqual = false;
-		if (firstElementLineStyle->GetLineWidth() != shapeLineStyle->GetLineWidth())
-			lineWidthEqual = false;
-	
-	}
-
-	m_lineStyle = std::make_shared<CGroupOutlineStyle>(
-		m_shapes,
-		(colorEqual) ? firstElementLineStyle->GetColor() : std::nullopt,
-		(lineWidthEqual) ? firstElementLineStyle->GetLineWidth() : std::nullopt,
-		(isEnable) ? firstElementLineStyle->IsEnable() : std::nullopt 	
-			);
-
-	return m_lineStyle;
+	return std::make_shared<CGroupOutlineStyle>(GetGroup());
 }
 
 const std::shared_ptr<IOutlineStyle> CGroupShape::GetOutlineStyle() const
@@ -209,30 +186,7 @@ const std::shared_ptr<IOutlineStyle> CGroupShape::GetOutlineStyle() const
 
 std::shared_ptr<IFillStyle> CGroupShape::GetFillStyle()
 {
-	if (m_shapes.empty())
-		throw std::logic_error("Group is empty");
-
-	auto firstElementFillStyle = m_shapes[0]->GetFillStyle();
-	bool isEnableEqual = true;
-	bool colorEqual = true;
-
-
-	for (auto& shape : m_shapes)
-	{
-		auto shapeFillStyle = shape->GetFillStyle();
-		if (firstElementFillStyle->IsEnable() != shapeFillStyle->IsEnable())
-			isEnableEqual = false;
-		if (firstElementFillStyle->GetColor() != shapeFillStyle->GetColor())
-			colorEqual = false;
-	}
-
-	m_fillStyle = std::make_shared<CGroupFillStyle>(
-		m_shapes,
-		(colorEqual) ? firstElementFillStyle->GetColor() : std::nullopt,
-		(isEnableEqual) ? firstElementFillStyle->IsEnable() : std::nullopt
-		);
-
-	return m_fillStyle;
+	return std::make_shared<CGroupFillStyle>(GetGroup());
 }
 
 const std::shared_ptr<IFillStyle> CGroupShape::GetFillStyle() const

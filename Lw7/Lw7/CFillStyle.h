@@ -1,6 +1,6 @@
 #pragma once
 #include "CommonTypes.h"
-#include "IStyle.h"
+#include "IFillStyle.h"
 
 class CFillStyle : public IFillStyle
 {

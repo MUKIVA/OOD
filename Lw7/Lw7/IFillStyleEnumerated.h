@@ -6,4 +6,5 @@ class IFillStyleEnumerated
 {
 public:
 	virtual void EnumerateFillStyles(const std::function<void(IFillStyle& style)>& callback) const = 0;
+	virtual ~IFillStyleEnumerated() = default;
 };

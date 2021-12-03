@@ -1,6 +1,6 @@
 #include "CGroupFillStyle.h"
 
-CGroupFillStyle::CGroupFillStyle(const std::shared_ptr<IFillStyleEnumerated>& enumerator)
+CGroupFillStyle::CGroupFillStyle(std::shared_ptr<IFillStyleEnumerated> enumerator)
 	: m_enum(enumerator)
 {
 }

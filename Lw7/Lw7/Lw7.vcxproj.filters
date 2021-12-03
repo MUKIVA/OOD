@@ -13,93 +13,126 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Исходные файлы\Shapes">
+      <UniqueIdentifier>{7de1dbf9-a621-476b-b536-99eea666b110}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Styles">
+      <UniqueIdentifier>{50217ded-b3af-41de-bdd1-53e38b6fb5d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Styles">
+      <UniqueIdentifier>{47f08977-b3d4-46c6-b5dc-208e08a348a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Shapes">
+      <UniqueIdentifier>{389d318c-fe90-49a8-9e2e-22dd868516ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Файлы заголовков\Canvas">
+      <UniqueIdentifier>{a7cf8be6-019c-4f82-8849-34f4e35bacfd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Исходные файлы\Canvas">
+      <UniqueIdentifier>{40ccb13b-a952-450a-8b65-2947cb1edd09}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommonTypes.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="IDrawable.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ICanvas.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="IStyle.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="IShape.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="IGroupShape.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="ISlide.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="IShapes.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="CShape.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="COutlineStyle.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="CFillStyle.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="CTriangle.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="CCanvas.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="CEllipse.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="CRectangle.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="CGroupShape.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="CGroupOutlineStyle.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\Styles</Filter>
     </ClInclude>
     <ClInclude Include="CGroupFillStyle.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="CGroupOutlineStyle.h">
+      <Filter>Файлы заголовков\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="COutlineStyle.h">
+      <Filter>Файлы заголовков\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="IOutlineStyle.h">
+      <Filter>Файлы заголовков\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="IFillStyle.h">
+      <Filter>Файлы заголовков\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="CEllipse.h">
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="CRectangle.h">
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="CShape.h">
+      <Filter>Файлы заголовков\Shapes</Filter>
     </ClInclude>
     <ClInclude Include="CSlide.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="CGroupShape.h">
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="CTriangle.h">
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="IDrawable.h">
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="IGroupShape.h">
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="IShape.h">
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="IShapes.h">
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="ISlide.h">
+      <Filter>Файлы заголовков\Shapes</Filter>
+    </ClInclude>
+    <ClInclude Include="IFillStyleEnumerated.h">
+      <Filter>Файлы заголовков\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="IOutlineStyleEnumerated.h">
+      <Filter>Файлы заголовков\Styles</Filter>
+    </ClInclude>
+    <ClInclude Include="ICanvas.h">
+      <Filter>Файлы заголовков\Canvas</Filter>
+    </ClInclude>
+    <ClInclude Include="CCanvas.h">
+      <Filter>Файлы заголовков\Canvas</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="CShape.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="CSlide.cpp">
+      <Filter>Исходные файлы\Shapes</Filter>
     </ClCompile>
-    <ClCompile Include="COutlineStyle.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="CShape.cpp">
+      <Filter>Исходные файлы\Shapes</Filter>
     </ClCompile>
     <ClCompile Include="CFillStyle.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="CCanvas.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="CGroupShape.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="CGroupOutlineStyle.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Styles</Filter>
     </ClCompile>
     <ClCompile Include="CGroupFillStyle.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Исходные файлы\Styles</Filter>
     </ClCompile>
-    <ClCompile Include="CSlide.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="CGroupOutlineStyle.cpp">
+      <Filter>Исходные файлы\Styles</Filter>
+    </ClCompile>
+    <ClCompile Include="CGroupShape.cpp">
+      <Filter>Исходные файлы\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="COutlineStyle.cpp">
+      <Filter>Исходные файлы\Styles</Filter>
+    </ClCompile>
+    <ClCompile Include="CEllipse.cpp">
+      <Filter>Исходные файлы\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="CTriangle.cpp">
+      <Filter>Исходные файлы\Shapes</Filter>
+    </ClCompile>
+    <ClCompile Include="CCanvas.cpp">
+      <Filter>Исходные файлы\Canvas</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

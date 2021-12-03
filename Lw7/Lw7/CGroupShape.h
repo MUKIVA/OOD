@@ -2,6 +2,8 @@
 #include "IGroupShape.h"
 #include "IFillStyleEnumerated.h"
 #include "IOutlineStyleEnumerated.h"
+#include "CGroupOutlineStyle.h"
+#include "CGroupFillStyle.h"
 #include <vector>
 #include <memory>
 #include <stdexcept>
@@ -11,8 +13,6 @@
 class CGroupShape 
 	: public IGroupShape
 	, public std::enable_shared_from_this<CGroupShape>
-	, public IFillStyleEnumerated
-	, public IOutlineStyleEnumerated
 {
 public:
 
@@ -52,8 +52,6 @@ public:
 	~CGroupShape();
 
 private:
-	std::shared_ptr<IOutlineStyle> m_lineStyle = nullptr;
-	std::shared_ptr<IFillStyle> m_fillStyle = nullptr;
 	std::vector<std::shared_ptr<IShape>> m_shapes;
 	std::shared_ptr<IGroupShape> m_parent = nullptr;
 	

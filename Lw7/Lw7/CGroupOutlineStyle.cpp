@@ -1,7 +1,7 @@
 #include "CGroupOutlineStyle.h"
 
-CGroupOutlineStyle::CGroupOutlineStyle(const std::shared_ptr<IOutlineStyleEnumerated>& enumerator)
-	: m_enum(move(enumerator))
+CGroupOutlineStyle::CGroupOutlineStyle(std::shared_ptr<IOutlineStyleEnumerated> enumerator)
+	: m_enum(enumerator)
 {
 }
 

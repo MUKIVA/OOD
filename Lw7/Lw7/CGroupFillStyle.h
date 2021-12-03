@@ -7,7 +7,7 @@
 class CGroupFillStyle : public IFillStyle
 {
 public:
-	CGroupFillStyle(const std::shared_ptr<IFillStyleEnumerated>& enumerator);
+	CGroupFillStyle(std::shared_ptr<IFillStyleEnumerated> enumerator);
 
 	std::optional<bool> IsEnable() const;
 	void Enable(bool enable);
