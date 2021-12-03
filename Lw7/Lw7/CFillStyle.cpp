@@ -1,4 +1,5 @@
 #include "CFillStyle.h"
+#include <optional>
 
 std::optional<bool> CFillStyle::IsEnable() const
 {

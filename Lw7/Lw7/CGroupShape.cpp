@@ -36,6 +36,9 @@ void CGroupShape::RemoveShapeAtIndex(size_t index)
 	if (index >= GetShapeCount())
 		throw std::out_of_range("Index is out of range");
 
+	if (GetShapeCount() == 1)
+		throw std::logic_error("You cannot delete the last item from the group");
+
 	m_shapes.erase(m_shapes.begin() + index);
 }
 
@@ -45,6 +48,34 @@ void CGroupShape::Draw(ICanvas& canvas)
 	{
 		shape->Draw(canvas);
 	}
+}
+
+CGroupShape::~CGroupShape()
+{
+	if (m_parent != nullptr)
+	{
+		size_t parentShapeCount = m_parent->GetShapeCount();
+		for (int i = 0; i < parentShapeCount; ++i)
+		{
+			if (GetGroup() == m_parent->GetShapeAtIndex(i))
+			{
+				m_parent->RemoveShapeAtIndex(i);
+			}
+		}
+	}
+}
+
+CGroupShape::CGroupShape(std::vector<std::shared_ptr<IShape>>& shapes)
+	: m_shapes(shapes)
+{
+	if (shapes.size() < 2)
+		throw std::logic_error("A group cannot contain less than two elements");
+}
+
+CGroupShape::CGroupShape(std::shared_ptr<IShape>& oneShape, std::shared_ptr<IShape>& twoShape)
+{
+	m_shapes.push_back(oneShape);
+	m_shapes.push_back(twoShape);
 }
 
 RectD CGroupShape::GetFrame() const
@@ -103,6 +134,22 @@ void CGroupShape::MoveShapes(double widthRatio, double heightRatio, double leftO
 			shapeFrame.height * heightRatio
 		};
 		shape->SetFrame(newFrame);
+	}
+}
+
+void CGroupShape::EnumerateFillStyles(const std::function<void(IFillStyle& style)>& callback) const
+{
+	for (auto& shape : m_shapes)
+	{
+		callback(*shape->GetFillStyle());
+	}
+}
+
+void CGroupShape::EnumerateOutlineStyles(const std::function<void(IOutlineStyle& style)>& callback) const
+{
+	for (auto& shape : m_shapes)
+	{
+		callback(*shape->GetOutlineStyle());
 	}
 }
 

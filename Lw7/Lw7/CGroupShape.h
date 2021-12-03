@@ -1,23 +1,24 @@
 #pragma once
 #include "IGroupShape.h"
+#include "IFillStyleEnumerated.h"
+#include "IOutlineStyleEnumerated.h"
 #include <vector>
 #include <memory>
 #include <stdexcept>
 #include <algorithm>
 
 
-class CGroupShape : public IGroupShape, public std::enable_shared_from_this<CGroupShape>
+class CGroupShape 
+	: public IGroupShape
+	, public std::enable_shared_from_this<CGroupShape>
+	, public IFillStyleEnumerated
+	, public IOutlineStyleEnumerated
 {
 public:
 
-	CGroupShape(std::vector<std::shared_ptr<IShape>>& shapes)
-		: m_shapes(shapes)
-	{
-	}
+	CGroupShape(std::vector<std::shared_ptr<IShape>>& shapes);
 
-	CGroupShape()
-	{
-	}
+	CGroupShape(std::shared_ptr<IShape>& oneShape, std::shared_ptr<IShape>& twoShape);
 
 	RectD GetFrame() const;
 	void SetFrame(const RectD& rect);
@@ -40,7 +41,15 @@ public:
 	std::shared_ptr<IShape> GetShapeAtIndex(size_t index);
 	void RemoveShapeAtIndex(size_t index);
 
+	// Унаследовано через IFillStyleEnumerated
+	virtual void EnumerateFillStyles(const std::function<void(IFillStyle& style)>& callback) const override;
+
+	// Унаследовано через IOutlineStyleEnumerated
+	virtual void EnumerateOutlineStyles(const std::function<void(IOutlineStyle& style)>& callback) const override;
+
 	void Draw(ICanvas& canvas) override;
+
+	~CGroupShape();
 
 private:
 	std::shared_ptr<IOutlineStyle> m_lineStyle = nullptr;
@@ -51,4 +60,6 @@ private:
 	bool IsParent(std::shared_ptr<IShape> parent);
 	
 	void MoveShapes(double widthRatio, double heightRatio, double leftOffset, double topOffset);
+
+	
 };

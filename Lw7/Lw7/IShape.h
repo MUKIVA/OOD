@@ -1,7 +1,6 @@
 #pragma once
 #include "IDrawable.h"
 #include "CommonTypes.h"
-#include "IStyle.h"
 #include <memory>
 
 class IGroupShape;

@@ -1,57 +1,96 @@
 #include "CGroupOutlineStyle.h"
 
-CGroupOutlineStyle::CGroupOutlineStyle(std::vector<std::shared_ptr<IShape>> shapes, std::optional<RGBAColor> color, std::optional<double> width, std::optional<bool> isEnable)
-	: m_shapes(shapes)
-	, m_color(color)
-	, m_isEnable(isEnable)
-	, m_lineWidth(width)
+CGroupOutlineStyle::CGroupOutlineStyle(const std::shared_ptr<IOutlineStyleEnumerated>& enumerator)
+	: m_enum(move(enumerator))
 {
 }
 
 std::optional<bool> CGroupOutlineStyle::IsEnable() const
 {
-	return m_isEnable;
+	std::optional<bool> result = true;
+	bool first = true;
+	m_enum->EnumerateOutlineStyles([&result, &first](IOutlineStyle& style)
+	{
+		if (result == std::nullopt)
+			return;
+
+		if (first)
+		{
+			result = style.IsEnable();
+			first = false;
+			return;
+		}
+		
+		result = (result != style.IsEnable()) ? std::nullopt : style.IsEnable();
+	});
+
+	return result;
 }
 
 void CGroupOutlineStyle::Enable(bool enable)
 {
-	for (auto& shape : m_shapes)
+	m_enum->EnumerateOutlineStyles([enable](IOutlineStyle& style) 
 	{
-		auto shapeLineStyle = shape->GetOutlineStyle();
-		shapeLineStyle->Enable(enable);
-	}
-
-	m_isEnable = enable;
+		style.Enable(enable);
+	});
 }
 
 std::optional<double> CGroupOutlineStyle::GetLineWidth() const
 {
-	return m_lineWidth;
+	std::optional<double> result;
+	bool first = true;
+	m_enum->EnumerateOutlineStyles([&result, &first](IOutlineStyle& style)
+	{
+		if (result == std::nullopt)
+			return;
+
+		if (first)
+		{
+			result = style.GetLineWidth();
+			first = false;
+			return;
+		}
+
+		result = (result != style.GetLineWidth()) ? std::nullopt : style.GetLineWidth();
+	});
+
+	return result;
 }
 
 void CGroupOutlineStyle::SetLineWidth(double width)
 {
-	for (auto& shape : m_shapes)
+	m_enum->EnumerateOutlineStyles([width](IOutlineStyle& style) 
 	{
-		auto shapeLineStyle = shape->GetOutlineStyle();
-		shapeLineStyle->SetLineWidth(width);
-	}
-
-	m_lineWidth = width;
+		style.SetLineWidth(width);
+	});
 }
 
 std::optional<RGBAColor> CGroupOutlineStyle::GetColor()
 {
-	return m_color;
+	std::optional<RGBAColor> result;
+	bool first = true;
+	m_enum->EnumerateOutlineStyles([&result, &first](IOutlineStyle& style)
+	{
+		if (result == std::nullopt)
+			return;
+
+		if (first)
+		{
+			result = style.GetColor();
+			first = false;
+			return;
+		}
+
+		result = (result != style.GetColor()) ? std::nullopt : style.GetColor();
+	});
+
+	return result;
 }
 
 void CGroupOutlineStyle::SetColor(RGBAColor color)
 {
-	for (auto& shape : m_shapes)
+	m_enum->EnumerateOutlineStyles([color](IOutlineStyle& style) 
 	{
-		auto shapeLineStyle = shape->GetOutlineStyle();
-		shapeLineStyle->SetColor(color);
-	}
-
-	m_color = color;
+		style.SetColor(color);
+	});
 }

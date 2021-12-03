@@ -64,3 +64,18 @@ void CShape::SetParent(std::shared_ptr<IGroupShape> parent)
 	m_parent = parent;
 }
 
+CShape::~CShape()
+{
+	if (m_parent != nullptr)
+	{
+		std::shared_ptr<IShape> sharedThis(this);
+		for (int i = 0; i < m_parent->GetShapeCount(); ++i)
+		{
+			if ( sharedThis == m_parent->GetShapeAtIndex(i))
+			{
+				m_parent->RemoveShapeAtIndex(i);
+			}
+		}
+	}
+}
+

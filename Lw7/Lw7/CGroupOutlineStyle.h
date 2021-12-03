@@ -1,25 +1,23 @@
 #pragma once
-#include "IStyle.h"
+#include "IOutlineStyle.h"
+#include "IOutlineStyleEnumerated.h"
 #include "IShape.h"
 #include <vector>
 
 class CGroupOutlineStyle : public IOutlineStyle
 {
 public:
-	CGroupOutlineStyle(std::vector<std::shared_ptr<IShape>> shapes, std::optional<RGBAColor> color,
-		std::optional<double> width, std::optional<bool> isEnable);
 
-	std::optional<bool> IsEnable() const;
-	void Enable(bool enable);
-	std::optional<double> GetLineWidth() const;
-	void SetLineWidth(double width);
-	std::optional<RGBAColor> GetColor();
-	void SetColor(RGBAColor color);
+	CGroupOutlineStyle(const std::shared_ptr<IOutlineStyleEnumerated>& enumerator);
+
+	std::optional<bool> IsEnable() const override;
+	void Enable(bool enable) override;
+	std::optional<double> GetLineWidth() const override;
+	void SetLineWidth(double width) override;
+	std::optional<RGBAColor> GetColor() override;
+	void SetColor(RGBAColor color) override;
 
 private:
-	std::optional<RGBAColor> m_color;
-	std::optional<double> m_lineWidth;
-	std::optional<bool> m_isEnable;
-	std::vector<std::shared_ptr<IShape>> m_shapes;
+	std::shared_ptr<IOutlineStyleEnumerated> m_enum;
 };
 

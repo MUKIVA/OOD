@@ -5,11 +5,8 @@
 class CSvgCanvas : public ICanvas
 {
 public:
-	CSvgCanvas(std::ostream& out)
-		: m_out(out)
-	{
-		BeginDraw();
-	}
+
+	CSvgCanvas(std::ostream& out);
 
 	void SetLineColor(RGBAColor color);
 	void SetFillColor(RGBAColor color);

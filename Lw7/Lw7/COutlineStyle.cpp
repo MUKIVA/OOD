@@ -1,4 +1,5 @@
 #include "COutlineStyle.h"
+#include <optional>
 
 std::optional<bool> COutlineStyle::IsEnable() const
 {

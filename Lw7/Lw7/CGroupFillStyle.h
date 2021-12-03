@@ -1,12 +1,13 @@
 #pragma once
 #include "IShape.h"
-#include "IStyle.h"
+#include "IFillStyle.h"
+#include "IFillStyleEnumerated.h"
 #include <vector>
 
 class CGroupFillStyle : public IFillStyle
 {
 public:
-	CGroupFillStyle(std::vector<std::shared_ptr<IShape>> shapes, std::optional<RGBAColor> color, std::optional<bool> isEnable);
+	CGroupFillStyle(const std::shared_ptr<IFillStyleEnumerated>& enumerator);
 
 	std::optional<bool> IsEnable() const;
 	void Enable(bool enable);
@@ -14,8 +15,5 @@ public:
 	void SetColor(RGBAColor color);
 
 private:
-	std::optional<RGBAColor> m_color;
-	std::optional<bool> m_isEnable;
-	std::vector<std::shared_ptr<IShape>> m_shapes;
-
+	std::shared_ptr<IFillStyleEnumerated> m_enum;
 };

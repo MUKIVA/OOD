@@ -29,6 +29,12 @@ void CSvgCanvas::EndDraw()
 	m_out << "</svg>" << std::endl;
 }
 
+CSvgCanvas::CSvgCanvas(std::ostream& out)
+	: m_out(out)
+{
+	BeginDraw();
+}
+
 void CSvgCanvas::SetLineColor(RGBAColor color)
 {
 	m_lineColor = color;

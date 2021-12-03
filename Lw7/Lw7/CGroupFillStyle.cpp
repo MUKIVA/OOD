@@ -1,41 +1,66 @@
 #include "CGroupFillStyle.h"
 
-CGroupFillStyle::CGroupFillStyle(std::vector<std::shared_ptr<IShape>> shapes, std::optional<RGBAColor> color,
-									std::optional<bool> isEnable)
-	: m_shapes(shapes)
-	, m_isEnable(isEnable)
-	, m_color(color)
+CGroupFillStyle::CGroupFillStyle(const std::shared_ptr<IFillStyleEnumerated>& enumerator)
+	: m_enum(enumerator)
 {
 }
 
 std::optional<bool> CGroupFillStyle::IsEnable() const
 {
-	return m_isEnable;
+	std::optional<bool> result = true;
+	bool first = true;
+	m_enum->EnumerateFillStyles([&result, &first](IFillStyle& style) 
+	{
+		if (result == std::nullopt)
+			return;
+
+		if (first)
+		{
+			result = style.IsEnable();
+			first = false;
+			return;
+		}
+
+		result = (result != style.IsEnable()) ? std::nullopt : style.IsEnable();
+	});
+
+	return result;
 }
 
 void CGroupFillStyle::Enable(bool enable)
 {
-	for (auto& shape : m_shapes)
+	m_enum->EnumerateFillStyles([enable](IFillStyle& style) 
 	{
-		auto shapeFillStyle = shape->GetFillStyle();
-		shapeFillStyle->Enable(enable);
-	}
-
-	m_isEnable = enable;
+		style.Enable(enable);
+	});
 }
 
 std::optional<RGBAColor> CGroupFillStyle::GetColor()
 {
-	return m_color;
+	std::optional<RGBAColor> result = true;
+	bool first = true;
+	m_enum->EnumerateFillStyles([&result, &first](IFillStyle& style)
+	{
+		if (result == std::nullopt)
+			return;
+
+		if (first)
+		{
+			result = style.GetColor();
+			first = false;
+			return;
+		}
+		
+		result = (result != style.GetColor()) ? std::nullopt : style.GetColor();
+	});
+
+	return result;
 }
 
 void CGroupFillStyle::SetColor(RGBAColor color)
 {
-	for (auto& shape : m_shapes)
+	m_enum->EnumerateFillStyles([color](IFillStyle& style) 
 	{
-		auto shapeFillStyle = shape->GetFillStyle();
-		shapeFillStyle->SetColor(color);
-	}
-
-	m_color = color;
+		style.SetColor(color);
+	});
 }
