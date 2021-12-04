@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Document
 {
-    internal class SetTitleCommand : CAbstractCommand
+    public class SetTitleCommand : CAbstractCommand
     {
         private IDocument _document;
         private readonly string _newTitle;

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Document
 {
-    internal interface IImage
+    public interface IImage
     {
         string RefPath { get; }
         string DocumentPath{ get; }

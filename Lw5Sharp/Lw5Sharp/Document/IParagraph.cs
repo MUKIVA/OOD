@@ -1,7 +1,7 @@
 ﻿
 namespace Document
 {
-    internal interface IParagraph
+    public interface IParagraph
     {
         string Text { get; set; }
     }

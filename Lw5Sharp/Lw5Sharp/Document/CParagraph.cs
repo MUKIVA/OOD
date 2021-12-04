@@ -1,7 +1,7 @@
 ﻿
 namespace Document
 {
-    internal class CParagraph : IParagraph
+    public class CParagraph : IParagraph
     {
 
         public CParagraph(string text)

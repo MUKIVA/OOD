@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Document
 {
-    internal interface ICommand
+    public interface ICommand
     {
         void Execute(string[]? args = null);
         void Unexecute();

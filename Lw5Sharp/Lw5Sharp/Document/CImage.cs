@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Document
 {
-    internal class CImage : IImage
+    public class CImage : IImage
     {
 
         private void AssertImageSize(int size)

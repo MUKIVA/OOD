@@ -3,7 +3,7 @@ using System.IO;
 
 namespace Document
 {
-    internal interface IDocument
+    public interface IDocument
     {
         public string Title { get; set; }
 

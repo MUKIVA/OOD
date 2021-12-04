@@ -170,7 +170,7 @@ namespace Lw5Sharp_tests
 
             Assert.Equal(2, _document.GetItemsCount());
             Assert.True(Validator.ValidateImage(_document, 0, "C:/DEV/test.jpg", 200, 100));
-            Assert.True(Validator.ValidateImage(_document, 1, "C:/ DEV / test.jpg", 100, 200));
+            Assert.True(Validator.ValidateImage(_document, 1, "C:/DEV/test.jpg", 100, 200));
         }
 
         [Fact]
@@ -212,8 +212,7 @@ namespace Lw5Sharp_tests
         [Fact]
         public void AddAndExecuteCommand()
         {
-            _document.BuildStrategy = new CSetTitleStrategy();
-            _document.BuildAndSendToHistory(new string[] { "1" });
+            _document.SetTitle("1 ");
             Assert.True(_document.CanUndo());
             Assert.Equal("1 ", _document.Title);
         }
@@ -221,12 +220,10 @@ namespace Lw5Sharp_tests
         [Fact]
         public void UndoTest()
         {
-            _document.BuildStrategy = new CSetTitleStrategy();
-            _document.BuildAndSendToHistory(new string[] { "1" });
+            _document.SetTitle("1 ");
             _document.Undo();
 
             Assert.False(_document.CanUndo());
-            Assert.True(_document.CanRedo());
             Assert.Equal("", _document.Title);
         }
 
@@ -234,19 +231,18 @@ namespace Lw5Sharp_tests
         [Fact]
         public void DeepMemoryTest()
         {
-            _document.BuildStrategy = new CSetTitleStrategy();
-            _document.BuildAndSendToHistory(new string[] { "1" });
-            _document.BuildAndSendToHistory(new string[] { "2" });
-            _document.BuildAndSendToHistory(new string[] { "3" });
-            _document.BuildAndSendToHistory(new string[] { "4" });
-            _document.BuildAndSendToHistory(new string[] { "5" });
-            _document.BuildAndSendToHistory(new string[] { "6" });
-            _document.BuildAndSendToHistory(new string[] { "7" });
-            _document.BuildAndSendToHistory(new string[] { "8" });
-            _document.BuildAndSendToHistory(new string[] { "9" });
-            _document.BuildAndSendToHistory(new string[] { "10" });
-            _document.BuildAndSendToHistory(new string[] { "11" });
-            _document.BuildAndSendToHistory(new string[] { "12" });
+            _document.SetTitle("1 ");
+            _document.SetTitle("2 ");
+            _document.SetTitle("3 ");
+            _document.SetTitle("4 ");
+            _document.SetTitle("5 ");
+            _document.SetTitle("6 ");
+            _document.SetTitle("7 ");
+            _document.SetTitle("8 ");
+            _document.SetTitle("9 ");
+            _document.SetTitle("10 ");
+            _document.SetTitle("11 ");
+            _document.SetTitle("12 ");
             _document.Undo();
             _document.Undo();
             _document.Undo();
@@ -281,18 +277,18 @@ namespace Lw5Sharp_tests
 
         private void LearnMenu(CMenu m)
         {
-            m.AddItem("help", "Show all instructions", new CHelpCommand(m));
-            m.AddItem("exit", "Exit from programm", new CExitCommand(m));
-            m.AddItem("title", "Set new title for document                      <newTitle>", new CSetTitleCommand(d));
-            m.AddItem("list", "Show info about document", new CListCommand(d, Console.Out));
-            m.AddItem("undo", "Cancels the last action", new CUndoCommand(d));
-            m.AddItem("redo", "Restores the canceled action", new CRedoCommand(d));
-            m.AddItem("ip", "Inserts a paragraph in the appropriate position    <position>|end <text>", new CInsertParagraphCommand(d));
-            m.AddItem("ii", "Inserts a image in the appropriate position        <position>|end <width> <height> <path>", new CInsertImageCommand(d));
-            m.AddItem("rpt", "Replace paragraph text                            <position> <newText>", new CReplaceTextCommand(d));
-            m.AddItem("ris", "Resize image                                      <position> <newWidth> <newHeight>", new CResizeImageCommand(d));
-            m.AddItem("del", "Delete item from position                         <position>", new CDeleteItemCommand(d));
-            m.AddItem("save", "Save html document                               <FilePath>", new CSaveCommand(d));
+            m.AddItem("help", "Show all instructions", m.ShowInstructions);
+            m.AddItem("exit", "Exit from programm", m.Exit);
+            m.AddItem("title", "Set new title for document                      <newTitle>", (_1) => m.SetTitle(d, _1));
+            m.AddItem("list", "Show info about document", (_1) => m.ShowList(d, _1));
+            m.AddItem("undo", "Cancels the last action", (_1) => m.Undo(d, _1));
+            m.AddItem("redo", "Restores the canceled action", (_1) => m.Redo(d, _1));
+            m.AddItem("ip", "Inserts a paragraph in the appropriate position    <position>|end <text>", (_1) => m.InsertParagraph(d, _1));
+            m.AddItem("ii", "Inserts a image in the appropriate position        <position>|end <width> <height> <path>", (_1) => m.InsertImage(d, _1));
+            m.AddItem("rpt", "Replace paragraph text                            <position> <newText>", (_1) => m.ReplaceText(d, _1));
+            m.AddItem("ris", "Resize image                                      <position> <newWidth> <newHeight>", (_1) => m.ResizeImage(d, _1));
+            m.AddItem("del", "Delete item from position                         <position>", (_1) => m.DeleteItem(d, _1));
+            m.AddItem("save", "Save html document                               <FilePath>", (_1) => m.SaveDocument(d, _1));
         }
 
         const string HELP_COMMAND_OUTPUT = "Command list:\r\n" +

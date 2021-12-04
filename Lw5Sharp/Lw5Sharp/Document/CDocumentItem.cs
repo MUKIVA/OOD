@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Document
 {
-    internal class CDocumentItem : ICloneable
+    public class CDocumentItem : ICloneable
     {
         public IImage? Image { get; }
         public IParagraph? Paragraph { get; }
@@ -36,13 +36,7 @@ namespace Document
 
         public object Clone()
         {
-            if (Image != null)
-                return Image;
-
-            if (Paragraph != null)
-                return Paragraph;
-
-            throw new Exception("Empty item");
+            return this;
         }
     }
 }

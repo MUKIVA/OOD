@@ -13,7 +13,7 @@ namespace Assertion
         public static void AssertionPosition(int pos, int itemCount)
         {
             if (pos > itemCount || pos < 0)
-                throw new ArgumentException("Index out of range");
+                throw new IndexOutOfRangeException("Index out of range");
         }
 
     }

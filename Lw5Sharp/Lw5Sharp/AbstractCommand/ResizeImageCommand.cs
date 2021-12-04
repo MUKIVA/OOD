@@ -7,7 +7,7 @@ using Assertion;
 
 namespace Document
 {
-    internal class ResizeImageCommand : CAbstractCommand
+    public class ResizeImageCommand : CAbstractCommand
     {
         private readonly int _position;
         private readonly List<CDocumentItem> _items;

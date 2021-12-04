@@ -7,7 +7,7 @@ using Assertion;
 
 namespace Document
 {
-    internal class ReplaceTextCommand : CAbstractCommand
+    public class ReplaceTextCommand : CAbstractCommand
     {
         private readonly int _position;
         private readonly List<CDocumentItem> _items;

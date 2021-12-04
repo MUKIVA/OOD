@@ -7,7 +7,7 @@ using Assertion;
 
 namespace Document
 {
-    internal class RemoveItemCommand : CAbstractCommand
+    public class RemoveItemCommand : CAbstractCommand
     {
         private readonly List<CDocumentItem> _items;
         private readonly int _position;

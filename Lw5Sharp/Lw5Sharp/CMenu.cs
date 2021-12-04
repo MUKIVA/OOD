@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Document
 {
-    internal class CMenu
+    public class CMenu
     {
         private TextReader _input { get; set; }
         private TextWriter _output { get; set; }

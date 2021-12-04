@@ -6,7 +6,7 @@ using Assertion;
 
 namespace Document
 {
-    internal class CDocument : IDocument
+    public class CDocument : IDocument
     {
 
 

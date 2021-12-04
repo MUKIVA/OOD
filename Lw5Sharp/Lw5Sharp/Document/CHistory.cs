@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Document
 {
-    internal class CHistory
+    public class CHistory
     {
         const int MAX_HISTORY_LENGTH = 10;
         const int MIN_HISTORY_LENGTH = 0;

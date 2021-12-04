@@ -7,7 +7,7 @@ using Assertion;
 
 namespace Document
 {
-    internal class InsertItemCommand : CAbstractCommand
+    public class InsertItemCommand : CAbstractCommand
     {
         private readonly int _position;
         private readonly List<CDocumentItem> _items;

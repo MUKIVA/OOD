@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Document
 {
-    abstract class CAbstractCommand : ICommand
+    public abstract class CAbstractCommand : ICommand
     {
         public bool Executed { get; private set; } = false;
 
