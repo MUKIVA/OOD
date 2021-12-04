@@ -7,19 +7,19 @@ CGroupFillStyle::CGroupFillStyle(std::shared_ptr<IFillStyleEnumerated> enumerato
 
 std::optional<bool> CGroupFillStyle::IsEnable() const
 {
-	std::optional<bool> result = true;
+	std::optional<bool> result = std::nullopt;
 	bool first = true;
 	m_enum->EnumerateFillStyles([&result, &first](IFillStyle& style) 
 	{
-		if (result == std::nullopt)
-			return;
-
 		if (first)
 		{
 			result = style.IsEnable();
 			first = false;
 			return;
 		}
+
+		if (result == std::nullopt)
+			return;
 
 		result = (result != style.IsEnable()) ? std::nullopt : style.IsEnable();
 	});
@@ -37,19 +37,19 @@ void CGroupFillStyle::Enable(bool enable)
 
 std::optional<RGBAColor> CGroupFillStyle::GetColor()
 {
-	std::optional<RGBAColor> result = true;
+	std::optional<RGBAColor> result = std::nullopt;
 	bool first = true;
 	m_enum->EnumerateFillStyles([&result, &first](IFillStyle& style)
 	{
-		if (result == std::nullopt)
-			return;
-
 		if (first)
 		{
 			result = style.GetColor();
 			first = false;
 			return;
 		}
+
+		if (result == std::nullopt)
+			return;
 		
 		result = (result != style.GetColor()) ? std::nullopt : style.GetColor();
 	});

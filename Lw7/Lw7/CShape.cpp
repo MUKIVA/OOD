@@ -19,24 +19,24 @@ void CShape::SetFrame(const RectD& rect)
 	m_frame = std::make_shared<RectD>(rect);
 }
 
-std::shared_ptr<IOutlineStyle> CShape::GetOutlineStyle()
+IOutlineStyle& CShape::GetOutlineStyle()
 {
-	return m_outlineStyle;
+	return *m_outlineStyle;
 }
 
-const std::shared_ptr<IOutlineStyle> CShape::GetOutlineStyle() const
+const IOutlineStyle& CShape::GetOutlineStyle() const
 {
-	return m_outlineStyle;
+	return *m_outlineStyle;
 }
 
-std::shared_ptr<IFillStyle> CShape::GetFillStyle()
+IFillStyle& CShape::GetFillStyle()
 {
-	return m_fillStyle;
+	return *m_fillStyle;
 }
 
-const std::shared_ptr<IFillStyle> CShape::GetFillStyle() const
+const IFillStyle& CShape::GetFillStyle() const
 {
-	return m_fillStyle;
+	return *m_fillStyle;
 }
 
 std::shared_ptr<IGroupShape> CShape::GetGroup()

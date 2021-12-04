@@ -31,3 +31,4 @@ void COutlineStyle::SetColor(RGBAColor color)
 {
 	m_color = color;
 }
+

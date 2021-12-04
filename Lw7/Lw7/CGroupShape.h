@@ -16,18 +16,18 @@ class CGroupShape
 {
 public:
 
-	CGroupShape(std::vector<std::shared_ptr<IShape>>& shapes);
+	CGroupShape(const std::vector<std::shared_ptr<IShape>>& shapes);
 
-	CGroupShape(std::shared_ptr<IShape>& oneShape, std::shared_ptr<IShape>& twoShape);
+	CGroupShape(const std::shared_ptr<IShape>& oneShape, const std::shared_ptr<IShape>& twoShape);
 
 	RectD GetFrame() const;
 	void SetFrame(const RectD& rect);
 
-	std::shared_ptr<IOutlineStyle> GetOutlineStyle();
-	const std::shared_ptr<IOutlineStyle> GetOutlineStyle() const;
+	IOutlineStyle& GetOutlineStyle();
+	const IOutlineStyle& GetOutlineStyle() const;
 
-	std::shared_ptr<IFillStyle> GetFillStyle();
-	const std::shared_ptr<IFillStyle> GetFillStyle() const;
+	IFillStyle& GetFillStyle();
+	const IFillStyle& GetFillStyle() const;
 
 	std::shared_ptr<IGroupShape> GetGroup();
 	std::shared_ptr<const IGroupShape> GetGroup() const;
@@ -54,6 +54,8 @@ public:
 private:
 	std::vector<std::shared_ptr<IShape>> m_shapes;
 	std::shared_ptr<IGroupShape> m_parent = nullptr;
+	std::unique_ptr<IOutlineStyle> m_lineStyle = nullptr; //std::make_unique<CGroupOutlineStyle>();
+	std::unique_ptr<IFillStyle> m_fillStyle = nullptr; //std::make_unique<CGroupFillStyle>();
 	
 	bool IsParent(std::shared_ptr<IShape> parent);
 	

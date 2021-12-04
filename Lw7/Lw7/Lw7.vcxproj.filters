@@ -134,5 +134,8 @@
     <ClCompile Include="CCanvas.cpp">
       <Filter>Исходные файлы\Canvas</Filter>
     </ClCompile>
+    <ClCompile Include="CRectangle.cpp">
+      <Filter>Исходные файлы\Shapes</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

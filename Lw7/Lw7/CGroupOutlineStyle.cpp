@@ -7,20 +7,20 @@ CGroupOutlineStyle::CGroupOutlineStyle(std::shared_ptr<IOutlineStyleEnumerated> 
 
 std::optional<bool> CGroupOutlineStyle::IsEnable() const
 {
-	std::optional<bool> result = true;
+	std::optional<bool> result = std::nullopt;
 	bool first = true;
 	m_enum->EnumerateOutlineStyles([&result, &first](IOutlineStyle& style)
 	{
-		if (result == std::nullopt)
-			return;
-
 		if (first)
 		{
 			result = style.IsEnable();
 			first = false;
 			return;
 		}
-		
+
+		if (result == std::nullopt)
+			return;
+
 		result = (result != style.IsEnable()) ? std::nullopt : style.IsEnable();
 	});
 
@@ -37,19 +37,19 @@ void CGroupOutlineStyle::Enable(bool enable)
 
 std::optional<double> CGroupOutlineStyle::GetLineWidth() const
 {
-	std::optional<double> result;
+	std::optional<double> result = std::nullopt;
 	bool first = true;
 	m_enum->EnumerateOutlineStyles([&result, &first](IOutlineStyle& style)
 	{
-		if (result == std::nullopt)
-			return;
-
 		if (first)
 		{
 			result = style.GetLineWidth();
 			first = false;
 			return;
 		}
+
+		if (result == std::nullopt)
+			return;
 
 		result = (result != style.GetLineWidth()) ? std::nullopt : style.GetLineWidth();
 	});
@@ -67,19 +67,19 @@ void CGroupOutlineStyle::SetLineWidth(double width)
 
 std::optional<RGBAColor> CGroupOutlineStyle::GetColor()
 {
-	std::optional<RGBAColor> result;
+	std::optional<RGBAColor> result = std::nullopt;
 	bool first = true;
 	m_enum->EnumerateOutlineStyles([&result, &first](IOutlineStyle& style)
 	{
-		if (result == std::nullopt)
-			return;
-
 		if (first)
 		{
 			result = style.GetColor();
 			first = false;
 			return;
 		}
+
+		if (result == std::nullopt)
+			return;
 
 		result = (result != style.GetColor()) ? std::nullopt : style.GetColor();
 	});

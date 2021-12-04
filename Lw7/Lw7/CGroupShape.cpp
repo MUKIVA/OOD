@@ -65,14 +65,14 @@ CGroupShape::~CGroupShape()
 	}
 }
 
-CGroupShape::CGroupShape(std::vector<std::shared_ptr<IShape>>& shapes)
+CGroupShape::CGroupShape(const std::vector<std::shared_ptr<IShape>>& shapes)
 	: m_shapes(shapes)
 {
 	if (shapes.size() < 2)
 		throw std::logic_error("A group cannot contain less than two elements");
 }
 
-CGroupShape::CGroupShape(std::shared_ptr<IShape>& oneShape, std::shared_ptr<IShape>& twoShape)
+CGroupShape::CGroupShape(const std::shared_ptr<IShape>& oneShape, const std::shared_ptr<IShape>& twoShape)
 {
 	m_shapes.push_back(oneShape);
 	m_shapes.push_back(twoShape);
@@ -137,23 +137,17 @@ void CGroupShape::MoveShapes(double widthRatio, double heightRatio, double leftO
 
 void CGroupShape::EnumerateFillStyles(const std::function<void(IFillStyle& style)>& callback) const
 {
-	if (m_shapes.empty())
-		throw std::logic_error("An empty group was encountered");
-
 	for (auto& shape : m_shapes)
 	{
-		callback(*shape->GetFillStyle());
+		callback(shape->GetFillStyle());
 	}
 }
 
 void CGroupShape::EnumerateOutlineStyles(const std::function<void(IOutlineStyle& style)>& callback) const
 {
-	if (m_shapes.empty())
-		throw std::logic_error("An empty group was encountered");
-
 	for (auto& shape : m_shapes)
 	{
-		callback(*shape->GetOutlineStyle());
+		callback(shape->GetOutlineStyle());
 	}
 }
 
@@ -174,22 +168,28 @@ void CGroupShape::SetFrame(const RectD& rect)
 	MoveShapes(1, 1, leftOffset, topOffset);
 }
 
-std::shared_ptr<IOutlineStyle> CGroupShape::GetOutlineStyle()
+IOutlineStyle& CGroupShape::GetOutlineStyle()
 {
-	return std::make_shared<CGroupOutlineStyle>(GetGroup());
+	if (m_lineStyle == nullptr)
+		m_lineStyle = std::make_unique<CGroupOutlineStyle>(GetGroup());
+
+	return *m_lineStyle;
 }
 
-const std::shared_ptr<IOutlineStyle> CGroupShape::GetOutlineStyle() const
+const IOutlineStyle& CGroupShape::GetOutlineStyle() const
 {
 	return GetOutlineStyle();
 }
 
-std::shared_ptr<IFillStyle> CGroupShape::GetFillStyle()
+IFillStyle& CGroupShape::GetFillStyle()
 {
-	return std::make_shared<CGroupFillStyle>(GetGroup());
+	if (m_fillStyle == nullptr)
+		m_fillStyle = std::make_unique<CGroupFillStyle>(GetGroup());
+
+	return *m_fillStyle;
 }
 
-const std::shared_ptr<IFillStyle> CGroupShape::GetFillStyle() const
+const IFillStyle& CGroupShape::GetFillStyle() const
 {
 	return GetFillStyle();
 }

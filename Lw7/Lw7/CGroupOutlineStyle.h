@@ -8,7 +8,7 @@ class CGroupOutlineStyle : public IOutlineStyle
 {
 public:
 
-	CGroupOutlineStyle(std::shared_ptr<IOutlineStyleEnumerated> enumerator);
+	CGroupOutlineStyle(const std::shared_ptr<IOutlineStyleEnumerated> enumerator);
 
 	std::optional<bool> IsEnable() const override;
 	void Enable(bool enable) override;
