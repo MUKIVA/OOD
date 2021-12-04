@@ -30,13 +30,13 @@ bool ValidShape(shared_ptr<IShape>& shape, RectD rect, RGBAColor lineColor, RGBA
 {
 	bool result = true;
 	auto fr = shape->GetFrame();
-	result = (result) ? shape->GetFillStyle()->GetColor() == fillColor : false;
-	result = (result) ? shape->GetOutlineStyle()->GetColor() == lineColor : false;
-	result = (result) ? shape->GetOutlineStyle()->GetLineWidth() == lineWidth : false;
-	result = (result) ? abs(shape->GetFrame().topLeft.x - rect.topLeft.x) < 0.001 : false;
-	result = (result) ? abs(shape->GetFrame().topLeft.y - rect.topLeft.y) < 0.001 : false;
-	result = (result) ? abs(shape->GetFrame().height - rect.height ) < 0.001 : false;
-	result = (result) ? abs(shape->GetFrame().width - rect.width) < 0.001 : false;
+	result = (result) ? shape->GetFillStyle().lock()->GetColor() == fillColor : false;
+	result = (result) ? shape->GetOutlineStyle().lock()->GetColor() == lineColor : false;
+	result = (result) ? shape->GetOutlineStyle().lock()->GetLineWidth() == lineWidth : false;
+	result = (result) ? abs(shape->GetFrame()->topLeft.x - rect.topLeft.x) < 0.001 : false;
+	result = (result) ? abs(shape->GetFrame()->topLeft.y - rect.topLeft.y) < 0.001 : false;
+	result = (result) ? abs(shape->GetFrame()->height - rect.height ) < 0.001 : false;
+	result = (result) ? abs(shape->GetFrame()->width - rect.width) < 0.001 : false;
 	return result;
 }
 
@@ -55,17 +55,16 @@ bool ValidFrame(RectD rect, double topLeftX, double topLeftY, double width, doub
 SCENARIO("Test full group creation")
 {
 	shared_ptr<IShape> neck = make_shared<CRectangle>(MakeConstDPoint(200, 500), MakeConstDPoint(300, 700));
-	neck->GetFillStyle()->SetColor(0xDDBDA2);
+	neck->GetFillStyle().lock()->SetColor(0xDDBDA2);
 	shared_ptr<IShape> face = make_shared<CEllipse>(MakeConstDPoint(250, 500), 100, 100);
-	face->GetFillStyle()->SetColor(0xFFDFC4);
+	face->GetFillStyle().lock()->SetColor(0xFFDFC4);
 	shared_ptr<IShape> eyeLeft = make_shared<CEllipse>(MakeConstDPoint(200, 450), 30, 10);
-	eyeLeft->GetFillStyle()->SetColor(0xFFFFFF);
+	eyeLeft->GetFillStyle().lock()->SetColor(0xFFFFFF);
 	shared_ptr<IShape> eyeRight = make_shared<CEllipse>(MakeConstDPoint(300, 450), 30, 10);
-	eyeRight->GetFillStyle()->SetColor(0xFFFFFF);
+	eyeRight->GetFillStyle().lock()->SetColor(0xFFFFFF);
 	shared_ptr<IShape> mouth = make_shared<CTriangle>(MakeConstDPoint(250, 500), MakeConstDPoint(240, 510), MakeConstDPoint(260, 510));
-	mouth->GetFillStyle()->SetColor(0xF44464);
-	mouth->GetOutlineStyle()->SetColor(0x900000);
-
+	mouth->GetFillStyle().lock()->SetColor(0xF44464);
+	mouth->GetOutlineStyle().lock()->SetColor(0x900000);
 	shared_ptr<IGroupShape> faceGroup = make_shared<CGroupShape>();
 
 	faceGroup->InsertShape(neck);
@@ -89,7 +88,7 @@ SCENARIO("Test full group creation")
 	WHEN("Group frame resize")
 	{
 		faceGroup->SetFrame({ { 150, 400 }, 100, 200 });
-		RectD groupRect = faceGroup->GetFrame();
+		RectD groupRect = *faceGroup->GetFrame();
 		REQUIRE(ValidFrame(groupRect, 150, 400, 100, 200));
 
 		REQUIRE(ValidShape(el0, { { 175, 466.666 }, 50, 133.334 }, 0x000000, 0xDDBDA2, 5));
@@ -101,7 +100,7 @@ SCENARIO("Test full group creation")
 
 	WHEN("Group change color")
 	{
-		faceGroup->GetOutlineStyle()->SetColor(0xDDDDDD);
+		faceGroup->GetOutlineStyle().lock()->SetColor(0xDDDDDD);
 
 		REQUIRE(ValidShape(el0, { { 200, 500 }, 100, 200 }, 0xDDDDDD, 0xDDBDA2, 5));
 		REQUIRE(ValidShape(el1, { { 150, 400 }, 200, 200 }, 0xDDDDDD, 0xFFDFC4, 5));
@@ -109,7 +108,7 @@ SCENARIO("Test full group creation")
 		REQUIRE(ValidShape(el3, { { 270, 440 }, 60, 20 }, 0xDDDDDD, 0xFFFFFF, 5));
 		REQUIRE(ValidShape(el4, { { 240, 500 }, 20, 10 }, 0xDDDDDD, 0xF44464, 5));
 
-		faceGroup->GetFillStyle()->SetColor(0xDDDDDD);
+		faceGroup->GetFillStyle().lock()->SetColor(0xDDDDDD);
 
 		REQUIRE(ValidShape(el0, { { 200, 500 }, 100, 200 }, 0xDDDDDD, 0xDDDDDD, 5));
 		REQUIRE(ValidShape(el1, { { 150, 400 }, 200, 200 }, 0xDDDDDD, 0xDDDDDD, 5));
@@ -120,28 +119,78 @@ SCENARIO("Test full group creation")
 
 	WHEN("GetColor with different colors in group")
 	{
-		REQUIRE(faceGroup->GetFillStyle()->GetColor() == nullopt);
-		REQUIRE(faceGroup->GetOutlineStyle()->GetColor() == nullopt);
+		REQUIRE(faceGroup->GetFillStyle().lock()->GetColor() == nullopt);
+		REQUIRE(faceGroup->GetOutlineStyle().lock()->GetColor() == nullopt);
 	}
 
 	WHEN("GetLineWidth")
 	{
-		REQUIRE(faceGroup->GetOutlineStyle()->GetLineWidth() == 5);
+		REQUIRE(faceGroup->GetOutlineStyle().lock()->GetLineWidth() == 5);
 	}
 }
 
 SCENARIO("test recursive insertion")
 {
-	shared_ptr<IShape> figure1 = make_shared<CRectangle>(MakeConstDPoint(200, 500), MakeConstDPoint(300, 700));
-	shared_ptr<IShape> figure2 = make_shared<CRectangle>(MakeConstDPoint(200, 500), MakeConstDPoint(300, 700));
-	shared_ptr<IShape> figure3 = make_shared<CRectangle>(MakeConstDPoint(200, 500), MakeConstDPoint(300, 700));
-	shared_ptr<IShape> figure4 = make_shared<CRectangle>(MakeConstDPoint(200, 500), MakeConstDPoint(300, 700));
-	shared_ptr<IShape> figure5 = make_shared<CRectangle>(MakeConstDPoint(200, 500), MakeConstDPoint(300, 700));
-	shared_ptr<IShape> figure6 = make_shared<CRectangle>(MakeConstDPoint(200, 500), MakeConstDPoint(300, 700));
 	shared_ptr<IGroupShape> group1 = make_shared<CGroupShape>();
 	shared_ptr<IGroupShape> group2 = make_shared<CGroupShape>();
 	shared_ptr<IGroupShape> group3 = make_shared<CGroupShape>();
 	REQUIRE_NOTHROW(group1->InsertShape(group2));
 	REQUIRE_NOTHROW(group2->InsertShape(group3));
 	REQUIRE_THROWS(group3->InsertShape(group1));
+}
+
+SCENARIO("Verification of ownership of one object")
+{
+	shared_ptr<IShape> figure1 = make_shared<CRectangle>(MakeConstDPoint(200, 500), MakeConstDPoint(300, 700));
+	shared_ptr<IShape> figure2 = make_shared<CRectangle>(MakeConstDPoint(200, 500), MakeConstDPoint(300, 700));
+	shared_ptr<IShape> figure3 = make_shared<CRectangle>(MakeConstDPoint(200, 500), MakeConstDPoint(300, 700));
+	shared_ptr<IGroupShape> group1 = make_shared<CGroupShape>();
+	REQUIRE_NOTHROW(group1->InsertShape(figure1));
+	REQUIRE_NOTHROW(group1->InsertShape(figure2));
+	shared_ptr<IGroupShape> group2 = make_shared<CGroupShape>();
+	REQUIRE_NOTHROW(group2->InsertShape(figure3));
+	REQUIRE_THROWS(group2->InsertShape(figure2));
+}
+
+SCENARIO("Dynamic style capture")
+{
+	shared_ptr<IGroupShape> group1 = make_shared<CGroupShape>();
+	shared_ptr<IShape> figure1 = make_shared<CRectangle>(MakeConstDPoint(200, 500), MakeConstDPoint(300, 700));
+	shared_ptr<IShape> figure2 = make_shared<CRectangle>(MakeConstDPoint(200, 500), MakeConstDPoint(300, 700));
+	group1->InsertShape(figure1);
+	group1->InsertShape(figure2);
+
+	auto lineStyle = group1->GetOutlineStyle().lock();
+	auto fillStyle = group1->GetFillStyle().lock();
+
+	WHEN("All shapes are the same")
+	{
+		REQUIRE(lineStyle->GetColor() == 0x000000);
+		REQUIRE(lineStyle->GetLineWidth() == 5);
+		REQUIRE(fillStyle->GetColor() == 0x000000);
+	}
+
+	WHEN("Line colors differ")
+	{
+		figure1->GetOutlineStyle().lock()->SetColor(0xFFFFFF);
+		REQUIRE(lineStyle->GetColor() == nullopt);
+		REQUIRE(lineStyle->GetLineWidth() == 5);
+		REQUIRE(fillStyle->GetColor() == 0x000000);
+	}
+
+	WHEN("Line width differ")
+	{
+		figure1->GetOutlineStyle().lock()->SetLineWidth(10);
+		REQUIRE(lineStyle->GetColor() == 0x000000);
+		REQUIRE(lineStyle->GetLineWidth() == nullopt);
+		REQUIRE(fillStyle->GetColor() == 0x000000);
+	}
+
+	WHEN("Fill color differ")
+	{
+		figure1->GetFillStyle().lock()->SetColor(0xFFFFFF);
+		REQUIRE(lineStyle->GetColor() == 0x000000);
+		REQUIRE(lineStyle->GetLineWidth() == 5);
+		REQUIRE(fillStyle->GetColor() == nullopt);
+	}
 }

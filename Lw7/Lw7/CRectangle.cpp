@@ -15,13 +15,19 @@ CRectangle::CRectangle(Point<double> const& topLeft, Point<double> const& bottom
 
 void CRectangle::Draw(ICanvas& canvas)
 {
-	auto& lineStyle = GetOutlineStyle();
-	auto& fillStyle = GetFillStyle();
+	auto lineStyle = GetOutlineStyle();
+	auto fillStyle = GetFillStyle();
 
-	if (*lineStyle.IsEnable())
+	if (lineStyle.expired() || fillStyle.expired())
+		throw std::logic_error("The style object has been deleted");
+
+	auto lineLock = lineStyle.lock();
+	auto fillLock = fillStyle.lock();
+
+	if (*lineLock->IsEnable())
 	{
-		canvas.SetLineColor(*lineStyle.GetColor());
-		canvas.SetLineWidth(*lineStyle.GetLineWidth());
+		canvas.SetLineColor(*lineLock->GetColor());
+		canvas.SetLineWidth(*lineLock->GetLineWidth());
 		canvas.MoveTo(m_topLeft);
 		canvas.LineTo({ m_bottomRight.x, m_topLeft.y });
 		canvas.LineTo(m_bottomRight);
@@ -29,9 +35,9 @@ void CRectangle::Draw(ICanvas& canvas)
 		canvas.LineTo(m_topLeft);
 	}
 
-	if (*fillStyle.IsEnable())
+	if (*fillLock->IsEnable())
 	{
-		canvas.SetFillColor(*fillStyle.GetColor());
+		canvas.SetFillColor(*fillLock->GetColor());
 		canvas.FillPoligon({
 			m_topLeft,
 			{ m_bottomRight.x, m_topLeft.y },

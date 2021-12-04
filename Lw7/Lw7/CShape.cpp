@@ -1,7 +1,10 @@
 #include "CShape.h"
 
-RectD CShape::GetFrame() const
+std::optional<RectD> CShape::GetFrame() const
 {
+	if (m_frame == nullptr)
+		return std::nullopt;
+
 	return *m_frame;
 }
 
@@ -19,24 +22,24 @@ void CShape::SetFrame(const RectD& rect)
 	m_frame = std::make_shared<RectD>(rect);
 }
 
-IOutlineStyle& CShape::GetOutlineStyle()
+std::weak_ptr<IOutlineStyle> CShape::GetOutlineStyle()
 {
-	return *m_outlineStyle;
+	return m_outlineStyle;
 }
 
-const IOutlineStyle& CShape::GetOutlineStyle() const
+const std::weak_ptr<IOutlineStyle> CShape::GetOutlineStyle() const
 {
-	return *m_outlineStyle;
+	return m_outlineStyle;
 }
 
-IFillStyle& CShape::GetFillStyle()
+std::weak_ptr<IFillStyle> CShape::GetFillStyle()
 {
-	return *m_fillStyle;
+	return m_fillStyle;
 }
 
-const IFillStyle& CShape::GetFillStyle() const
+const std::weak_ptr<IFillStyle> CShape::GetFillStyle() const
 {
-	return *m_fillStyle;
+	return m_fillStyle;
 }
 
 std::shared_ptr<IGroupShape> CShape::GetGroup()
@@ -49,14 +52,14 @@ std::shared_ptr<const IGroupShape> CShape::GetGroup() const
 	return nullptr;
 }
 
-std::shared_ptr<IGroupShape> CShape::GetParent()
+std::weak_ptr<IGroupShape> CShape::GetParent()
 {
 	return m_parent;
 }
 
-std::shared_ptr<const IGroupShape> CShape::GetParent() const
+std::weak_ptr<const IGroupShape> CShape::GetParent() const
 {
-	return m_parent;
+	return GetParent();
 }
 
 void CShape::SetParent(std::shared_ptr<IGroupShape> parent)
@@ -66,14 +69,15 @@ void CShape::SetParent(std::shared_ptr<IGroupShape> parent)
 
 CShape::~CShape()
 {
-	if (m_parent != nullptr)
+	if (!m_parent.expired())
 	{
 		std::shared_ptr<IShape> sharedThis(this);
-		for (int i = 0; i < m_parent->GetShapeCount(); ++i)
+		auto lock = m_parent.lock();
+		for (int i = 0; i < lock->GetShapeCount(); ++i)
 		{
-			if ( sharedThis == m_parent->GetShapeAtIndex(i))
+			if ( sharedThis == lock->GetShapeAtIndex(i))
 			{
-				m_parent->RemoveShapeAtIndex(i);
+				lock->RemoveShapeAtIndex(i);
 			}
 		}
 	}

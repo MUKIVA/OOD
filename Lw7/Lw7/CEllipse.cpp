@@ -15,19 +15,22 @@ CEllipse::CEllipse(Point<double> const& center, double width, double height)
 
 void CEllipse::Draw(ICanvas& canvas)
 {
-	auto& lineStyle = GetOutlineStyle();
-	auto& fillStyle = GetFillStyle();
+	auto lineStyle = GetOutlineStyle();
+	auto fillStyle = GetFillStyle();
 
-	if (*lineStyle.IsEnable())
+	if (lineStyle.expired() || fillStyle.expired())
+		throw std::logic_error("The style object has been deleted");
+
+	if (*lineStyle.lock()->IsEnable())
 	{
-		canvas.SetLineColor(*lineStyle.GetColor());
-		canvas.SetLineWidth(*lineStyle.GetLineWidth());
+		canvas.SetLineColor(*lineStyle.lock()->GetColor());
+		canvas.SetLineWidth(*lineStyle.lock()->GetLineWidth());
 		canvas.DrawEllipse(m_center, m_width, m_height);
 	}
 
-	if (*fillStyle.IsEnable())
+	if (*fillStyle.lock()->IsEnable())
 	{
-		canvas.SetFillColor(*fillStyle.GetColor());
+		canvas.SetFillColor(*fillStyle.lock()->GetColor());
 		canvas.FillEllipse(m_center, m_width, m_height);
 	}
 }

@@ -18,6 +18,44 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Lw7\CCanvas.cpp" />
+    <ClCompile Include="..\Lw7\CEllipse.cpp" />
+    <ClCompile Include="..\Lw7\CFillStyle.cpp" />
+    <ClCompile Include="..\Lw7\CGroupFillStyle.cpp" />
+    <ClCompile Include="..\Lw7\CGroupOutlineStyle.cpp" />
+    <ClCompile Include="..\Lw7\CGroupShape.cpp" />
+    <ClCompile Include="..\Lw7\COutlineStyle.cpp" />
+    <ClCompile Include="..\Lw7\CRectangle.cpp" />
+    <ClCompile Include="..\Lw7\CShape.cpp" />
+    <ClCompile Include="..\Lw7\CSlide.cpp" />
+    <ClCompile Include="..\Lw7\CTriangle.cpp" />
+    <ClCompile Include="tests.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Lw7\CCanvas.h" />
+    <ClInclude Include="..\Lw7\CEllipse.h" />
+    <ClInclude Include="..\Lw7\CFillStyle.h" />
+    <ClInclude Include="..\Lw7\CGroupFillStyle.h" />
+    <ClInclude Include="..\Lw7\CGroupOutlineStyle.h" />
+    <ClInclude Include="..\Lw7\CGroupShape.h" />
+    <ClInclude Include="..\Lw7\CommonTypes.h" />
+    <ClInclude Include="..\Lw7\COutlineStyle.h" />
+    <ClInclude Include="..\Lw7\CRectangle.h" />
+    <ClInclude Include="..\Lw7\CShape.h" />
+    <ClInclude Include="..\Lw7\CSlide.h" />
+    <ClInclude Include="..\Lw7\CTriangle.h" />
+    <ClInclude Include="..\Lw7\ICanvas.h" />
+    <ClInclude Include="..\Lw7\IDrawable.h" />
+    <ClInclude Include="..\Lw7\IFillStyle.h" />
+    <ClInclude Include="..\Lw7\IFillStyleEnumerated.h" />
+    <ClInclude Include="..\Lw7\IGroupShape.h" />
+    <ClInclude Include="..\Lw7\IOutlineStyle.h" />
+    <ClInclude Include="..\Lw7\IOutlineStyleEnumerated.h" />
+    <ClInclude Include="..\Lw7\IShape.h" />
+    <ClInclude Include="..\Lw7\IShapes.h" />
+    <ClInclude Include="..\Lw7\ISlide.h" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -146,38 +184,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClCompile Include="..\Lw7\CCanvas.cpp" />
-    <ClCompile Include="..\Lw7\CFillStyle.cpp" />
-    <ClCompile Include="..\Lw7\CGroupFillStyle.cpp" />
-    <ClCompile Include="..\Lw7\CGroupOutlineStyle.cpp" />
-    <ClCompile Include="..\Lw7\CGroupShape.cpp" />
-    <ClCompile Include="..\Lw7\COutlineStyle.cpp" />
-    <ClCompile Include="..\Lw7\CShape.cpp" />
-    <ClCompile Include="..\Lw7\CSlide.cpp" />
-    <ClCompile Include="tests.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Lw7\CCanvas.h" />
-    <ClInclude Include="..\Lw7\CEllipse.h" />
-    <ClInclude Include="..\Lw7\CFillStyle.h" />
-    <ClInclude Include="..\Lw7\CGroupFillStyle.h" />
-    <ClInclude Include="..\Lw7\CGroupOutlineStyle.h" />
-    <ClInclude Include="..\Lw7\CGroupShape.h" />
-    <ClInclude Include="..\Lw7\CommonTypes.h" />
-    <ClInclude Include="..\Lw7\COutlineStyle.h" />
-    <ClInclude Include="..\Lw7\CRectangle.h" />
-    <ClInclude Include="..\Lw7\CShape.h" />
-    <ClInclude Include="..\Lw7\CSlide.h" />
-    <ClInclude Include="..\Lw7\CTriangle.h" />
-    <ClInclude Include="..\Lw7\ICanvas.h" />
-    <ClInclude Include="..\Lw7\IDrawable.h" />
-    <ClInclude Include="..\Lw7\IGroupShape.h" />
-    <ClInclude Include="..\Lw7\IShape.h" />
-    <ClInclude Include="..\Lw7\IShapes.h" />
-    <ClInclude Include="..\Lw7\ISlide.h" />
-    <ClInclude Include="..\Lw7\IStyle.h" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

@@ -16,24 +16,24 @@ class CGroupShape
 {
 public:
 
-	CGroupShape(const std::vector<std::shared_ptr<IShape>>& shapes);
+	//CGroupShape(const std::vector<std::shared_ptr<IShape>>& shapes);
 
-	CGroupShape(const std::shared_ptr<IShape>& oneShape, const std::shared_ptr<IShape>& twoShape);
+	//CGroupShape(const std::shared_ptr<IShape>& oneShape, const std::shared_ptr<IShape>& twoShape);
 
-	RectD GetFrame() const;
+	std::optional<RectD> GetFrame() const;
 	void SetFrame(const RectD& rect);
 
-	IOutlineStyle& GetOutlineStyle();
-	const IOutlineStyle& GetOutlineStyle() const;
+	std::weak_ptr<IOutlineStyle> GetOutlineStyle();
+	const std::weak_ptr<IOutlineStyle> GetOutlineStyle() const;
 
-	IFillStyle& GetFillStyle();
-	const IFillStyle& GetFillStyle() const;
+	std::weak_ptr<IFillStyle> GetFillStyle();
+	const std::weak_ptr<IFillStyle> GetFillStyle() const;
 
 	std::shared_ptr<IGroupShape> GetGroup();
 	std::shared_ptr<const IGroupShape> GetGroup() const;
 
-	std::shared_ptr<IGroupShape> GetParent();
-	std::shared_ptr<const IGroupShape> GetParent() const;
+	std::weak_ptr<IGroupShape> GetParent();
+	std::weak_ptr<const IGroupShape> GetParent() const;
 	void SetParent(std::shared_ptr<IGroupShape> parent);
 
 	size_t GetShapeCount() const;
@@ -53,9 +53,9 @@ public:
 
 private:
 	std::vector<std::shared_ptr<IShape>> m_shapes;
-	std::shared_ptr<IGroupShape> m_parent = nullptr;
-	std::unique_ptr<IOutlineStyle> m_lineStyle = nullptr; //std::make_unique<CGroupOutlineStyle>();
-	std::unique_ptr<IFillStyle> m_fillStyle = nullptr; //std::make_unique<CGroupFillStyle>();
+	std::weak_ptr<IGroupShape> m_parent;
+	std::shared_ptr<IOutlineStyle> m_lineStyle = nullptr; //std::make_unique<CGroupOutlineStyle>();
+	std::shared_ptr<IFillStyle> m_fillStyle = nullptr; //std::make_unique<CGroupFillStyle>();
 	
 	bool IsParent(std::shared_ptr<IShape> parent);
 	

@@ -9,6 +9,9 @@ size_t CGroupShape::GetShapeCount() const
 
 void CGroupShape::InsertShape(std::shared_ptr<IShape> const& shape, size_t position)
 {
+	if (shape->GetParent().lock() != nullptr)
+		throw std::logic_error("A shape can only have one parent.");
+
 	if (IsParent(shape))
 		throw std::logic_error("Cannot recursive insert");
 
@@ -52,34 +55,49 @@ void CGroupShape::Draw(ICanvas& canvas)
 
 CGroupShape::~CGroupShape()
 {
-	if (m_parent != nullptr)
+	if (!m_parent.expired())
 	{
-		size_t parentShapeCount = m_parent->GetShapeCount();
+		auto lock = m_parent.lock();
+		size_t parentShapeCount = lock->GetShapeCount();
 		for (int i = 0; i < parentShapeCount; ++i)
 		{
-			if (GetGroup() == m_parent->GetShapeAtIndex(i))
+			if (GetGroup() == lock->GetShapeAtIndex(i))
 			{
-				m_parent->RemoveShapeAtIndex(i);
+				lock->RemoveShapeAtIndex(i);
 			}
 		}
 	}
 }
 
-CGroupShape::CGroupShape(const std::vector<std::shared_ptr<IShape>>& shapes)
-	: m_shapes(shapes)
-{
-	if (shapes.size() < 2)
-		throw std::logic_error("A group cannot contain less than two elements");
-}
+//CGroupShape::CGroupShape(const std::vector<std::shared_ptr<IShape>>& shapes)
+//	: m_shapes(shapes)
+//{
+//	if (shapes.size() < 2)
+//		throw std::logic_error("A group cannot contain less than two elements");
+//
+//	for (const auto& shape : shapes)
+//	{
+//		if (shape->GetParent() != nullptr)
+//			throw std::logic_error("A shape cannot have more than one parent");
+//
+//		shape->SetParent(GetGroup());
+//	}
+//}
 
-CGroupShape::CGroupShape(const std::shared_ptr<IShape>& oneShape, const std::shared_ptr<IShape>& twoShape)
-{
-	m_shapes.push_back(oneShape);
-	m_shapes.push_back(twoShape);
-}
+//CGroupShape::CGroupShape(const std::shared_ptr<IShape>& oneShape, const std::shared_ptr<IShape>& twoShape)
+//{
+//	if (oneShape->GetParent() != nullptr || twoShape->GetParent() != nullptr)
+//		throw std::logic_error("A shape cannot have more than one parent");
+//
+//	m_shapes.push_back(oneShape);
+//	m_shapes.push_back(twoShape);
+//}
 
-RectD CGroupShape::GetFrame() const
+std::optional<RectD> CGroupShape::GetFrame() const
 {
+	if (m_shapes.empty())
+		return std::nullopt;
+
 	std::vector<double> topCoords;
 	std::vector<double> leftCoords;
 	std::vector<double> rightCoords;
@@ -87,11 +105,15 @@ RectD CGroupShape::GetFrame() const
 
 	for (auto& shape : m_shapes)
 	{
-		RectD shapeFrame = shape->GetFrame();
-		topCoords.push_back(shapeFrame.topLeft.y);
-		leftCoords.push_back(shapeFrame.topLeft.x);
-		bottomCoords.push_back(shapeFrame.topLeft.y + shapeFrame.height);
-		rightCoords.push_back(shapeFrame.topLeft.x + shapeFrame.width);
+		auto shapeFrame = shape->GetFrame();
+
+		if (shapeFrame == std::nullopt)
+			continue;
+
+		topCoords.push_back(shapeFrame->topLeft.y);
+		leftCoords.push_back(shapeFrame->topLeft.x);
+		bottomCoords.push_back(shapeFrame->topLeft.y + shapeFrame->height);
+		rightCoords.push_back(shapeFrame->topLeft.x + shapeFrame->width);
 	}
 
 	double left = *std::min_element(leftCoords.begin(), leftCoords.end());
@@ -115,7 +137,7 @@ bool CGroupShape::IsParent(std::shared_ptr<IShape> parent)
 	{
 		if (currentNode == parent)
 			return true;
-		currentNode = currentNode->GetParent();
+		currentNode = currentNode->GetParent().lock();
 	}
 	return false;
 }
@@ -125,11 +147,15 @@ void CGroupShape::MoveShapes(double widthRatio, double heightRatio, double leftO
 	for (auto& shape : m_shapes)
 	{
 		auto shapeFrame = shape->GetFrame();
+
+		if (shapeFrame == std::nullopt)
+			continue;
+
 		auto newFrame = RectD{
-			widthRatio * (shapeFrame.topLeft.x + leftOffset),
-			heightRatio * (shapeFrame.topLeft.y + topOffset),
-			shapeFrame.width * widthRatio,
-			shapeFrame.height * heightRatio
+			widthRatio * (shapeFrame->topLeft.x + leftOffset),
+			heightRatio * (shapeFrame->topLeft.y + topOffset),
+			shapeFrame->width * widthRatio,
+			shapeFrame->height * heightRatio
 		};
 		shape->SetFrame(newFrame);
 	}
@@ -139,7 +165,7 @@ void CGroupShape::EnumerateFillStyles(const std::function<void(IFillStyle& style
 {
 	for (auto& shape : m_shapes)
 	{
-		callback(shape->GetFillStyle());
+		callback(*shape->GetFillStyle().lock());
 	}
 }
 
@@ -147,49 +173,53 @@ void CGroupShape::EnumerateOutlineStyles(const std::function<void(IOutlineStyle&
 {
 	for (auto& shape : m_shapes)
 	{
-		callback(shape->GetOutlineStyle());
+		callback(*shape->GetOutlineStyle().lock());
 	}
 }
 
 void CGroupShape::SetFrame(const RectD& rect)
 {
 	auto oldFrame = GetFrame();
-	auto widthRatio = rect.width / oldFrame.width;
-	auto heightRatio = rect.height / oldFrame.height;
-	auto leftOffset = rect.topLeft.x - oldFrame.topLeft.x;
-	auto topOffset = rect.topLeft.y - oldFrame.topLeft.y;
+
+	if (oldFrame == std::nullopt)
+		return;
+
+	auto widthRatio = rect.width / oldFrame->width;
+	auto heightRatio = rect.height / oldFrame->height;
+	auto leftOffset = rect.topLeft.x - oldFrame->topLeft.x;
+	auto topOffset = rect.topLeft.y - oldFrame->topLeft.y;
 
 	MoveShapes(widthRatio, heightRatio, leftOffset, topOffset);
 
 	oldFrame = GetFrame();
-	leftOffset = rect.topLeft.x - oldFrame.topLeft.x;
-	topOffset = rect.topLeft.y - oldFrame.topLeft.y;
+	leftOffset = rect.topLeft.x - oldFrame->topLeft.x;
+	topOffset = rect.topLeft.y - oldFrame->topLeft.y;
 	
 	MoveShapes(1, 1, leftOffset, topOffset);
 }
 
-IOutlineStyle& CGroupShape::GetOutlineStyle()
+std::weak_ptr<IOutlineStyle> CGroupShape::GetOutlineStyle()
 {
 	if (m_lineStyle == nullptr)
-		m_lineStyle = std::make_unique<CGroupOutlineStyle>(GetGroup());
+		m_lineStyle = std::make_shared<CGroupOutlineStyle>(GetGroup());
 
-	return *m_lineStyle;
+	return m_lineStyle;
 }
 
-const IOutlineStyle& CGroupShape::GetOutlineStyle() const
+const std::weak_ptr<IOutlineStyle> CGroupShape::GetOutlineStyle() const
 {
 	return GetOutlineStyle();
 }
 
-IFillStyle& CGroupShape::GetFillStyle()
+std::weak_ptr<IFillStyle> CGroupShape::GetFillStyle()
 {
 	if (m_fillStyle == nullptr)
 		m_fillStyle = std::make_unique<CGroupFillStyle>(GetGroup());
 
-	return *m_fillStyle;
+	return m_fillStyle;
 }
 
-const IFillStyle& CGroupShape::GetFillStyle() const
+const std::weak_ptr<IFillStyle> CGroupShape::GetFillStyle() const
 {
 	return GetFillStyle();
 }
@@ -204,12 +234,12 @@ std::shared_ptr<const IGroupShape> CGroupShape::GetGroup() const
 	return GetGroup();
 }
 
-std::shared_ptr<IGroupShape> CGroupShape::GetParent()
+std::weak_ptr<IGroupShape> CGroupShape::GetParent()
 {
 	return m_parent;
 }
 
-std::shared_ptr<const IGroupShape> CGroupShape::GetParent() const
+std::weak_ptr<const IGroupShape> CGroupShape::GetParent() const
 {
 	return m_parent;
 }

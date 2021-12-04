@@ -22,22 +22,28 @@ CTriangle::CTriangle(Point<double> const& p1, Point<double> const& p2, Point<dou
 
 void CTriangle::Draw(ICanvas& canvas)
 {
-	auto& lineStyle = GetOutlineStyle();
-	auto& fillStyle = GetFillStyle();
+	auto lineStyle = GetOutlineStyle();
+	auto fillStyle = GetFillStyle();
 
-	if (*lineStyle.IsEnable())
+	if (lineStyle.expired() || fillStyle.expired())
+		throw std::logic_error("The style object has been deleted");
+
+	auto lineLock = lineStyle.lock();
+	auto fillLock = fillStyle.lock();
+
+	if (*lineLock->IsEnable())
 	{
-		canvas.SetLineColor(*lineStyle.GetColor());
-		canvas.SetLineWidth(*lineStyle.GetLineWidth());
+		canvas.SetLineColor(*lineLock->GetColor());
+		canvas.SetLineWidth(*lineLock->GetLineWidth());
 		canvas.MoveTo(m_p1);
 		canvas.LineTo(m_p2);
 		canvas.LineTo(m_p3);
 		canvas.LineTo(m_p1);
 	}
 
-	if (*fillStyle.IsEnable())
+	if (*fillLock->IsEnable())
 	{
-		canvas.SetFillColor(*fillStyle.GetColor());
+		canvas.SetFillColor(*fillLock->GetColor());
 		canvas.FillPoligon({ m_p1, m_p2, m_p3 });
 	}
 }
