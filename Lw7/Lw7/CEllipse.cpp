@@ -18,19 +18,19 @@ void CEllipse::Draw(ICanvas& canvas)
 	auto lineStyle = GetOutlineStyle();
 	auto fillStyle = GetFillStyle();
 
-	if (lineStyle.expired() || fillStyle.expired())
+	if (lineStyle == nullptr || fillStyle == nullptr)
 		throw std::logic_error("The style object has been deleted");
 
-	if (*lineStyle.lock()->IsEnable())
+	if (*lineStyle->IsEnable())
 	{
-		canvas.SetLineColor(*lineStyle.lock()->GetColor());
-		canvas.SetLineWidth(*lineStyle.lock()->GetLineWidth());
+		canvas.SetLineColor(*lineStyle->GetColor());
+		canvas.SetLineWidth(*lineStyle->GetLineWidth());
 		canvas.DrawEllipse(m_center, m_width, m_height);
 	}
 
-	if (*fillStyle.lock()->IsEnable())
+	if (*fillStyle->IsEnable())
 	{
-		canvas.SetFillColor(*fillStyle.lock()->GetColor());
+		canvas.SetFillColor(*fillStyle->GetColor());
 		canvas.FillEllipse(m_center, m_width, m_height);
 	}
 }

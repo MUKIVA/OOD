@@ -165,7 +165,7 @@ void CGroupShape::EnumerateFillStyles(const std::function<void(IFillStyle& style
 {
 	for (auto& shape : m_shapes)
 	{
-		callback(*shape->GetFillStyle().lock());
+		callback(*shape->GetFillStyle());
 	}
 }
 
@@ -173,7 +173,7 @@ void CGroupShape::EnumerateOutlineStyles(const std::function<void(IOutlineStyle&
 {
 	for (auto& shape : m_shapes)
 	{
-		callback(*shape->GetOutlineStyle().lock());
+		callback(*shape->GetOutlineStyle());
 	}
 }
 
@@ -198,30 +198,46 @@ void CGroupShape::SetFrame(const RectD& rect)
 	MoveShapes(1, 1, leftOffset, topOffset);
 }
 
-std::weak_ptr<IOutlineStyle> CGroupShape::GetOutlineStyle()
+std::unique_ptr<IOutlineStyle> CGroupShape::GetOutlineStyle()
 {
-	if (m_lineStyle == nullptr)
-		m_lineStyle = std::make_shared<CGroupOutlineStyle>(GetGroup());
+	/*if (m_lineStyle == nullptr)
+		m_lineStyle = std::make_unique<CGroupOutlineStyle>(GetGroup());*/
 
-	return m_lineStyle;
+	return std::make_unique<CGroupOutlineStyle>(CGroupOutlineStyle(GetGroup()));
 }
 
-const std::weak_ptr<IOutlineStyle> CGroupShape::GetOutlineStyle() const
+const std::unique_ptr<IOutlineStyle> CGroupShape::GetOutlineStyle() const
 {
 	return GetOutlineStyle();
 }
 
-std::weak_ptr<IFillStyle> CGroupShape::GetFillStyle()
+void CGroupShape::SetOutlineStyle(const IOutlineStyle& style)
 {
-	if (m_fillStyle == nullptr)
-		m_fillStyle = std::make_unique<CGroupFillStyle>(GetGroup());
-
-	return m_fillStyle;
+	for (auto& shape : m_shapes)
+	{
+		shape->SetOutlineStyle(style);
+	}
 }
 
-const std::weak_ptr<IFillStyle> CGroupShape::GetFillStyle() const
+std::unique_ptr<IFillStyle> CGroupShape::GetFillStyle()
+{
+	/*if (m_fillStyle == nullptr)
+		m_fillStyle = std::make_unique<CGroupFillStyle>(GetGroup());*/
+
+	return std::make_unique<CGroupFillStyle>(CGroupFillStyle(GetGroup()));
+}
+
+const std::unique_ptr<IFillStyle> CGroupShape::GetFillStyle() const
 {
 	return GetFillStyle();
+}
+
+void CGroupShape::SetFillStyle(const IFillStyle& style)
+{
+	for (auto& shape : m_shapes)
+	{
+		shape->SetFillStyle(style);
+	}
 }
 
 std::shared_ptr<IGroupShape> CGroupShape::GetGroup()

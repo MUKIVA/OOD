@@ -1,6 +1,17 @@
 #include "COutlineStyle.h"
 #include <optional>
 
+COutlineStyle::COutlineStyle(const IOutlineStyle& style)
+	: m_color(style.GetColor())
+	, m_isEnable(style.IsEnable())
+	, m_lineWidth(style.GetLineWidth())
+{
+}
+
+COutlineStyle::COutlineStyle()
+{
+}
+
 std::optional<bool> COutlineStyle::IsEnable() const
 {
 	return m_isEnable;
@@ -22,7 +33,7 @@ void COutlineStyle::SetLineWidth(double width)
 }
 
 
-std::optional<RGBAColor> COutlineStyle::GetColor()
+std::optional<RGBAColor> COutlineStyle::GetColor() const
 {
 	return m_color;
 }

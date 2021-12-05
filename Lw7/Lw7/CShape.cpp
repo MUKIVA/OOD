@@ -22,24 +22,28 @@ void CShape::SetFrame(const RectD& rect)
 	m_frame = std::make_shared<RectD>(rect);
 }
 
-std::weak_ptr<IOutlineStyle> CShape::GetOutlineStyle()
+std::unique_ptr<IOutlineStyle> CShape::GetOutlineStyle()
 {
-	return m_outlineStyle;
+	std::unique_ptr<IOutlineStyle> result = std::make_unique<COutlineStyle>();
+	result->Enable(*m_outlineStyle->IsEnable());
+	result->SetColor(*m_outlineStyle->GetColor());
+	result->SetLineWidth(*m_outlineStyle->GetLineWidth());
+	return result;
 }
 
-const std::weak_ptr<IOutlineStyle> CShape::GetOutlineStyle() const
+const std::unique_ptr<IOutlineStyle> CShape::GetOutlineStyle() const
 {
-	return m_outlineStyle;
+	return GetOutlineStyle();
 }
 
-std::weak_ptr<IFillStyle> CShape::GetFillStyle()
+std::unique_ptr<IFillStyle> CShape::GetFillStyle()
 {
-	return m_fillStyle;
+	return std::make_unique<CFillStyle>(*m_fillStyle);
 }
 
-const std::weak_ptr<IFillStyle> CShape::GetFillStyle() const
+const std::unique_ptr<IFillStyle> CShape::GetFillStyle() const
 {
-	return m_fillStyle;
+	return GetFillStyle();
 }
 
 std::shared_ptr<IGroupShape> CShape::GetGroup()
@@ -81,5 +85,25 @@ CShape::~CShape()
 			}
 		}
 	}
+}
+
+void CShape::SetOutlineStyle(const IOutlineStyle& style)
+{
+	//if (style.GetColor() != std::nullopt)
+	//	m_outlineStyle->SetColor(*style.GetColor());
+	//if (style.IsEnable() != std::nullopt)
+	//	m_outlineStyle->Enable(*style.IsEnable());
+	//if (style.GetLineWidth() != std::nullopt)
+	//	m_outlineStyle->SetLineWidth(*style.GetLineWidth());
+	m_outlineStyle = std::make_unique<COutlineStyle>(style);
+}
+
+void CShape::SetFillStyle(const IFillStyle& style)
+{
+	/*if (style.GetColor() != std::nullopt)
+		m_fillStyle->SetColor(*style.GetColor());
+	if (style.IsEnable() != std::nullopt)
+		m_fillStyle->Enable(*style.IsEnable());*/
+	m_fillStyle = std::make_unique<CFillStyle>(style);
 }
 

@@ -25,22 +25,22 @@ int main()
 	CSvgCanvas canvas(svg);
 	// ‘он
 	shared_ptr<IShape> bgLeft = make_shared<CRectangle>(MakeConstDPoint(0, 0), MakeConstDPoint(500, 1000));
-	bgLeft->GetOutlineStyle().lock()->Enable(false);
-	bgLeft->GetFillStyle().lock()->SetColor(0x018786);
+	bgLeft->GetOutlineStyle()->Enable(false);
+	bgLeft->GetFillStyle()->SetColor(0x018786);
 	shared_ptr<IShape> bgRight = make_shared<CRectangle>(MakeConstDPoint(500, 0), MakeConstDPoint(1000, 1000));
-	bgRight->GetOutlineStyle().lock()->Enable(false);
-	bgRight->GetFillStyle().lock()->SetColor(0x03DAC6);
+	bgRight->GetOutlineStyle()->Enable(false);
+	bgRight->GetFillStyle()->SetColor(0x03DAC6);
 
 	// Ћицо 1
 	shared_ptr<IShape> face = make_shared<CEllipse>(MakeConstDPoint(250, 500), 100, 100);
-	face->GetFillStyle().lock()->SetColor(0xFFDFC4);
+	face->GetFillStyle()->SetColor(0xFFDFC4);
 	shared_ptr<IShape> eyeLeft = make_shared<CEllipse>(MakeConstDPoint(200, 450), 30, 10);
-	eyeLeft->GetFillStyle().lock()->SetColor(0xFFFFFF);
+	eyeLeft->GetFillStyle()->SetColor(0xFFFFFF);
 	shared_ptr<IShape> eyeRight = make_shared<CEllipse>(MakeConstDPoint(300, 450), 30, 10);
-	eyeRight->GetFillStyle().lock()->SetColor(0xFFFFFF);
+	eyeRight->GetFillStyle()->SetColor(0xFFFFFF);
 	shared_ptr<IShape> mouth = make_shared<CTriangle>(MakeConstDPoint(250, 500), MakeConstDPoint(240, 510), MakeConstDPoint(260, 510));
-	mouth->GetFillStyle().lock()->SetColor(0xF44464);
-	mouth->GetOutlineStyle().lock()->SetColor(0x900000);
+	mouth->GetFillStyle()->SetColor(0xF44464);
+	mouth->GetOutlineStyle()->SetColor(0x900000);
 
 	vector<shared_ptr<IShape>> faceOne{ face, eyeLeft, eyeRight, mouth };
 	shared_ptr<IGroupShape> faceOneGroup = make_shared<CGroupShape>();
@@ -48,27 +48,28 @@ int main()
 	{
 		faceOneGroup->InsertShape(shape);
 	}
+
 	faceOneGroup->SetFrame({ { 150, 400 }, 100, 100 });
 
 	// Ћицо 2
 	shared_ptr<IShape> face2 = make_shared<CRectangle>(MakeConstDPoint(650, 400), MakeConstDPoint(850, 600));
-	face2->GetOutlineStyle().lock()->Enable(false);
-	face2->GetFillStyle().lock()->SetColor(0xFFDFC4);
+	face2->GetOutlineStyle()->Enable(false);
+	face2->GetFillStyle()->SetColor(0xFFDFC4);
 	shared_ptr<IShape> eyeLeft2 = make_shared<CRectangle>(MakeConstDPoint(700, 450), MakeConstDPoint(720, 470));
-	eyeLeft2->GetOutlineStyle().lock()->Enable(false);
-	eyeLeft2->GetFillStyle().lock()->SetColor(0xFFFFFF);
+	eyeLeft2->GetOutlineStyle()->Enable(false);
+	eyeLeft2->GetFillStyle()->SetColor(0xFFFFFF);
 	shared_ptr<IShape> eyeLeftPupil2 = make_shared<CRectangle>(MakeConstDPoint(710, 460), MakeConstDPoint(720, 470));
-	eyeLeftPupil2->GetOutlineStyle().lock()->Enable(false);
-	eyeLeftPupil2->GetFillStyle().lock()->SetColor(0x000000);
+	eyeLeftPupil2->GetOutlineStyle()->Enable(false);
+	eyeLeftPupil2->GetFillStyle()->SetColor(0x000000);
 	shared_ptr<IShape> eyeRight2 = make_shared<CRectangle>(MakeConstDPoint(780, 450), MakeConstDPoint(800, 470));
-	eyeRight2->GetOutlineStyle().lock()->Enable(false);
-	eyeRight2->GetFillStyle().lock()->SetColor(0xFFFFFF);
+	eyeRight2->GetOutlineStyle()->Enable(false);
+	eyeRight2->GetFillStyle()->SetColor(0xFFFFFF);
 	shared_ptr<IShape> eyeRightPupil2 = make_shared<CRectangle>(MakeConstDPoint(790, 460), MakeConstDPoint(800, 470));
-	eyeRightPupil2->GetOutlineStyle().lock()->Enable(false);
-	eyeRightPupil2->GetFillStyle().lock()->SetColor(0x000000);
+	eyeRightPupil2->GetOutlineStyle()->Enable(false);
+	eyeRightPupil2->GetFillStyle()->SetColor(0x000000);
 	shared_ptr<IShape> mouth2 = make_shared<CRectangle>(MakeConstDPoint(700, 550), MakeConstDPoint(800, 555));
-	mouth2->GetFillStyle().lock()->SetColor(0xF44464);
-	mouth2->GetOutlineStyle().lock()->Enable(false);
+	mouth2->GetFillStyle()->SetColor(0xF44464);
+	mouth2->GetOutlineStyle()->Enable(false);
 
 
 	vector<shared_ptr<IShape>> faceTwo{ face2, eyeLeft2, eyeLeftPupil2, eyeRight2, eyeRightPupil2, mouth2 };

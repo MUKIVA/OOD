@@ -35,7 +35,7 @@ void CGroupFillStyle::Enable(bool enable)
 	});
 }
 
-std::optional<RGBAColor> CGroupFillStyle::GetColor()
+std::optional<RGBAColor> CGroupFillStyle::GetColor() const
 {
 	std::optional<RGBAColor> result = std::nullopt;
 	bool first = true;

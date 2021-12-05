@@ -18,16 +18,13 @@ void CRectangle::Draw(ICanvas& canvas)
 	auto lineStyle = GetOutlineStyle();
 	auto fillStyle = GetFillStyle();
 
-	if (lineStyle.expired() || fillStyle.expired())
+	if (lineStyle == nullptr || fillStyle == nullptr)
 		throw std::logic_error("The style object has been deleted");
 
-	auto lineLock = lineStyle.lock();
-	auto fillLock = fillStyle.lock();
-
-	if (*lineLock->IsEnable())
+	if (*lineStyle->IsEnable())
 	{
-		canvas.SetLineColor(*lineLock->GetColor());
-		canvas.SetLineWidth(*lineLock->GetLineWidth());
+		canvas.SetLineColor(*lineStyle->GetColor());
+		canvas.SetLineWidth(*lineStyle->GetLineWidth());
 		canvas.MoveTo(m_topLeft);
 		canvas.LineTo({ m_bottomRight.x, m_topLeft.y });
 		canvas.LineTo(m_bottomRight);
@@ -35,9 +32,9 @@ void CRectangle::Draw(ICanvas& canvas)
 		canvas.LineTo(m_topLeft);
 	}
 
-	if (*fillLock->IsEnable())
+	if (*fillStyle->IsEnable())
 	{
-		canvas.SetFillColor(*fillLock->GetColor());
+		canvas.SetFillColor(*fillStyle->GetColor());
 		canvas.FillPoligon({
 			m_topLeft,
 			{ m_bottomRight.x, m_topLeft.y },
@@ -45,4 +42,16 @@ void CRectangle::Draw(ICanvas& canvas)
 			{ m_topLeft.x, m_bottomRight.y }
 		});
 	}
+}
+
+void CRectangle::MovePoints(double offsetX, double offsetY, double ratioWidth, double ratioHeight)
+{
+	m_topLeft.x += offsetX;
+	m_topLeft.y += offsetY;
+
+	m_bottomRight.x = (m_bottomRight.x - m_frame->topLeft.x) * ratioWidth + m_frame->topLeft.x;
+	m_bottomRight.y = (m_bottomRight.y - m_frame->topLeft.y) * ratioHeight + m_frame->topLeft.y;
+
+	m_bottomRight.x += offsetX;
+	m_bottomRight.y += offsetY;
 }

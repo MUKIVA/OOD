@@ -25,25 +25,22 @@ void CTriangle::Draw(ICanvas& canvas)
 	auto lineStyle = GetOutlineStyle();
 	auto fillStyle = GetFillStyle();
 
-	if (lineStyle.expired() || fillStyle.expired())
+	if (lineStyle == nullptr || fillStyle == nullptr)
 		throw std::logic_error("The style object has been deleted");
 
-	auto lineLock = lineStyle.lock();
-	auto fillLock = fillStyle.lock();
-
-	if (*lineLock->IsEnable())
+	if (*lineStyle->IsEnable())
 	{
-		canvas.SetLineColor(*lineLock->GetColor());
-		canvas.SetLineWidth(*lineLock->GetLineWidth());
+		canvas.SetLineColor(*lineStyle->GetColor());
+		canvas.SetLineWidth(*lineStyle->GetLineWidth());
 		canvas.MoveTo(m_p1);
 		canvas.LineTo(m_p2);
 		canvas.LineTo(m_p3);
 		canvas.LineTo(m_p1);
 	}
 
-	if (*fillLock->IsEnable())
+	if (*fillStyle->IsEnable())
 	{
-		canvas.SetFillColor(*fillLock->GetColor());
+		canvas.SetFillColor(*fillStyle->GetColor());
 		canvas.FillPoligon({ m_p1, m_p2, m_p3 });
 	}
 }

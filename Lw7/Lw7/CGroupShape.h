@@ -16,30 +16,28 @@ class CGroupShape
 {
 public:
 
-	//CGroupShape(const std::vector<std::shared_ptr<IShape>>& shapes);
+	std::optional<RectD> GetFrame() const override;
+	void SetFrame(const RectD& rect) override;
 
-	//CGroupShape(const std::shared_ptr<IShape>& oneShape, const std::shared_ptr<IShape>& twoShape);
+	std::unique_ptr<IOutlineStyle> GetOutlineStyle() override;
+	const std::unique_ptr<IOutlineStyle> GetOutlineStyle() const override;
+	void SetOutlineStyle(const IOutlineStyle& style) override;
 
-	std::optional<RectD> GetFrame() const;
-	void SetFrame(const RectD& rect);
+	std::unique_ptr<IFillStyle> GetFillStyle() override;
+	const std::unique_ptr<IFillStyle> GetFillStyle() const override;
+	void SetFillStyle(const IFillStyle& style) override;
 
-	std::weak_ptr<IOutlineStyle> GetOutlineStyle();
-	const std::weak_ptr<IOutlineStyle> GetOutlineStyle() const;
+	std::shared_ptr<IGroupShape> GetGroup() override;
+	std::shared_ptr<const IGroupShape> GetGroup() const override;
 
-	std::weak_ptr<IFillStyle> GetFillStyle();
-	const std::weak_ptr<IFillStyle> GetFillStyle() const;
+	std::weak_ptr<IGroupShape> GetParent() override;
+	std::weak_ptr<const IGroupShape> GetParent() const override;
+	void SetParent(std::shared_ptr<IGroupShape> parent) override;
 
-	std::shared_ptr<IGroupShape> GetGroup();
-	std::shared_ptr<const IGroupShape> GetGroup() const;
-
-	std::weak_ptr<IGroupShape> GetParent();
-	std::weak_ptr<const IGroupShape> GetParent() const;
-	void SetParent(std::shared_ptr<IGroupShape> parent);
-
-	size_t GetShapeCount() const;
-	void InsertShape(std::shared_ptr<IShape> const& shape, size_t position = std::numeric_limits<size_t>::max());
-	std::shared_ptr<IShape> GetShapeAtIndex(size_t index);
-	void RemoveShapeAtIndex(size_t index);
+	size_t GetShapeCount() const override;
+	void InsertShape(std::shared_ptr<IShape> const& shape, size_t position = std::numeric_limits<size_t>::max()) override;
+	std::shared_ptr<IShape> GetShapeAtIndex(size_t index) override;
+	void RemoveShapeAtIndex(size_t index) override;
 
 	// Унаследовано через IFillStyleEnumerated
 	virtual void EnumerateFillStyles(const std::function<void(IFillStyle& style)>& callback) const override;
@@ -54,8 +52,8 @@ public:
 private:
 	std::vector<std::shared_ptr<IShape>> m_shapes;
 	std::weak_ptr<IGroupShape> m_parent;
-	std::shared_ptr<IOutlineStyle> m_lineStyle = nullptr; //std::make_unique<CGroupOutlineStyle>();
-	std::shared_ptr<IFillStyle> m_fillStyle = nullptr; //std::make_unique<CGroupFillStyle>();
+	//std::unique_ptr<IOutlineStyle> m_lineStyle = nullptr; //std::make_unique<CGroupOutlineStyle>();
+	//std::unique_ptr<IFillStyle> m_fillStyle = nullptr; //std::make_unique<CGroupFillStyle>();
 	
 	bool IsParent(std::shared_ptr<IShape> parent);
 	

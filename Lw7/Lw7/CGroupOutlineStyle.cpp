@@ -65,7 +65,7 @@ void CGroupOutlineStyle::SetLineWidth(double width)
 	});
 }
 
-std::optional<RGBAColor> CGroupOutlineStyle::GetColor()
+std::optional<RGBAColor> CGroupOutlineStyle::GetColor() const
 {
 	std::optional<RGBAColor> result = std::nullopt;
 	bool first = true;

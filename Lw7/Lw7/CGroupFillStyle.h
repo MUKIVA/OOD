@@ -11,7 +11,7 @@ public:
 
 	std::optional<bool> IsEnable() const;
 	void Enable(bool enable);
-	std::optional<RGBAColor> GetColor();
+	std::optional<RGBAColor> GetColor() const;
 	void SetColor(RGBAColor color);
 
 private:

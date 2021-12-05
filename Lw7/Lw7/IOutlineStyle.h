@@ -11,7 +11,7 @@ public:
 
 	virtual std::optional<double> GetLineWidth() const = 0;
 	virtual void SetLineWidth(double width) = 0;
-	virtual std::optional<RGBAColor> GetColor() = 0;
+	virtual std::optional<RGBAColor> GetColor() const = 0;
 	virtual void SetColor(RGBAColor color) = 0;
 
 	~IOutlineStyle() = default;

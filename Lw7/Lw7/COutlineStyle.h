@@ -7,13 +7,16 @@ class COutlineStyle : public IOutlineStyle
 {
 public:
 
+	COutlineStyle(const IOutlineStyle& style);
+	COutlineStyle();
+
 	std::optional<bool> IsEnable() const override;
 	void Enable(bool enable) override;
 
 	std::optional<double> GetLineWidth() const override;
 	void SetLineWidth(double width) override;
 
-	std::optional<RGBAColor> GetColor() override;
+	std::optional<RGBAColor> GetColor() const override;
 	void SetColor(RGBAColor color) override;
 
 private:
