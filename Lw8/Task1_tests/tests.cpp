@@ -154,7 +154,9 @@ SCENARIO("Gumball Machine filled with 1 gum and 1 turned quarter")
 	WHEN("Dispense")
 	{
 		m.Dispense();
-		REQUIRE(ss.str() == "Oops, out of gumballs\n");
+		REQUIRE(ss.str() == "A gumball comes rolling out the slot...\n"
+							"Oops, out of gumballs\n"
+		);
 	}
 
 	WHEN("EjectQuarter")
@@ -230,17 +232,4 @@ SCENARIO("Gumball Machine filled with 1 gum and 1 turned quarter and dispense")
 		m.TurnCrank();
 		REQUIRE(ss.str() == "You turned but there's no gumballs\n");
 	}
-}
-
-SCENARIO("Gumball Machine filled with 2 gum")
-{
-	stringstream ss;
-	CGumballMachine m(2, ss);
-
-	m.InsertQuarter();
-	m.TurnCrank();
-	m.InsertQuarter();
-	m.TurnCrank();
-	REQUIRE(ss.str() == "You inserted a quarter\n"
-						"");
 }

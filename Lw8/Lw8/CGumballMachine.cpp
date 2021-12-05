@@ -50,7 +50,7 @@ void CGumballMachine::ReleaseBall()
 {
 	if (m_count != 0)
 	{
-		std::cout << "A gumball comes rolling out the slot...\n";
+		m_out << "A gumball comes rolling out the slot...\n";
 		--m_count;
 	}
 }
