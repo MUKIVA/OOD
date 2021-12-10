@@ -10,6 +10,7 @@ public:
 	virtual void SetNoQuarterState() = 0;
 	virtual void SetSoldState() = 0;
 	virtual void SetHasQuarterState() = 0;
-
-	virtual ~IGumballMachine() = default;
+	
+protected:
+	~IGumballMachine() = default;
 };

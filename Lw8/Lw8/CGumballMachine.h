@@ -8,7 +8,7 @@
 #include <memory>
 #include <iostream>
 
-class CGumballMachine : public IGumballMachine
+class CGumballMachine : private IGumballMachine
 {
 public:
 	CGumballMachine(unsigned numBalls, std::ostream& out = std::cout);
@@ -18,11 +18,12 @@ public:
 	void TurnCrank();
 	void Dispense();
 	std::string ToString() const;
+	unsigned GetBallCount() const;
 
 
 private:
 	void ReleaseBall();
-	unsigned GetBallCount() const;
+
 	void SetSoldOutState();
 	void SetNoQuarterState();
 	void SetSoldState();

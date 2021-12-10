@@ -50,7 +50,7 @@ void CGumballMachine::ReleaseBall()
 {
 	if (m_count != 0)
 	{
-		std::cout << "A gumball comes rolling out the slot...\n";
+		m_out << "A gumball comes rolling out the slot...\n";
 		--m_count;
 	}
 }
@@ -62,20 +62,20 @@ unsigned CGumballMachine::GetBallCount() const
 
 void CGumballMachine::SetSoldOutState()
 {
-	m_currentState.reset(new CSoldOutState(*this, m_out));
+	m_currentState = std::make_unique<CSoldOutState>(static_cast<IGumballMachine&>(*this), m_out);
 }
 
 void CGumballMachine::SetNoQuarterState()
 {
-	m_currentState.reset(new CNoQuarterState(*this, m_out));
+	m_currentState = std::make_unique<CNoQuarterState>(static_cast<IGumballMachine&>(*this), m_out);
 }
 
 void CGumballMachine::SetSoldState()
 {
-	m_currentState.reset(new CSoldState(*this, m_out));
+	m_currentState = std::make_unique<CSoldState>(static_cast<IGumballMachine&>(*this), m_out);
 }
 
 void CGumballMachine::SetHasQuarterState()
 {
-	m_currentState.reset(new CHasQuarterState(*this, m_out));
+	m_currentState = std::make_unique<CHasQuarterState>(static_cast<IGumballMachine&>(*this), m_out);
 }
