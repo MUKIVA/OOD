@@ -37,14 +37,14 @@ namespace Document
         {
             AssertParagraph(_items[_position]); 
 
-            _items[_position].Paragraph.Text = _newText; 
+            _items[_position].Paragraph?.ReplaceText(_newText); 
 
         }
 
         protected override void DoUnexecute()
         {
             AssertParagraph(_items[_position]);
-            _items[_position].Paragraph.Text = _oldText;
+            _items[_position].Paragraph?.ReplaceText(_oldText);
         }
     }
 }

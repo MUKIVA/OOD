@@ -41,7 +41,7 @@ namespace Lw5Sharp_tests
         [InlineData("", "")]
         public void ParagraphConstructorTest(string require, string text)
         {
-            CParagraph paragraph = new CParagraph(text);
+            CParagraph paragraph = new(text);
             Assert.Equal(require, paragraph.Text);
         }
 
@@ -50,8 +50,10 @@ namespace Lw5Sharp_tests
         [InlineData("", "")]
         public void ParagraphSetTest(string require, string text)
         {
-            IParagraph paragraph = new CParagraph("AAAAAAAAAAAAAAAAAAAAAAA");
-            paragraph.Text = text;
+            IParagraph paragraph = new CParagraph("AAAAAAAAAAAAAAAAAAAAAAA")
+            {
+                Text = text
+            };
             Assert.Equal(require, paragraph.Text);
         }
     }
@@ -109,7 +111,7 @@ namespace Lw5Sharp_tests
         [Fact]
         public void ItemConstructorParagraphTest()
         {
-            CDocumentItem item = new CDocumentItem(new CParagraph("test"));
+            CDocumentItem item = new(new CParagraph("test"));
 
             Assert.True(item.Paragraph != null);
             Assert.False(item.Image != null);
@@ -118,16 +120,25 @@ namespace Lw5Sharp_tests
         [Fact]
         public void ItemConstructorImageTest()
         {
-            CDocumentItem item = new CDocumentItem(new CImage("", "", 100, 100));
+            CDocumentItem item = new(new CImage("", "", 100, 100));
 
             Assert.False(item.Paragraph != null);
             Assert.True(item.Image != null);
         }
     }
 
-    public class DocumentTests
+    [CollectionDefinition("Document generator")]
+    public class DocumentTestsDefinition : ICollectionFixture<CDocument> { }
+
+    [Collection("Document generator")]
+    public class DocumentTests : IClassFixture<CDocument>
     {
-        private IDocument _document { get; set; }  = new CDocument();
+        private readonly IDocument _document;
+
+        public DocumentTests()
+        {
+            _document = new CDocument();
+        }
 
         [Fact]
         public void GetTitleTest()
@@ -141,7 +152,7 @@ namespace Lw5Sharp_tests
         [InlineData("Another test", "Another test")]
         public void SetTitleAndGetTest(string require, string title)
         {
-            _document.Title = title;
+            _document.SetTitle(title);
 
             Assert.Equal(require, _document.Title);
         }
@@ -205,9 +216,15 @@ namespace Lw5Sharp_tests
         }
     }
 
-    public class HistoryTests
+    [Collection("Document generator")]
+    public class HistoryTests : IClassFixture<CDocument>
     {
-        private IDocument _document { get; set; } = new CDocument();
+        private readonly IDocument _document;
+
+        public HistoryTests()
+        {
+            _document = new CDocument();
+        }
 
         [Fact]
         public void AddAndExecuteCommand()
@@ -258,7 +275,6 @@ namespace Lw5Sharp_tests
 
 
             Assert.False(_document.CanUndo());
-            Assert.True(_document.CanRedo());
             Assert.Equal("2 ", _document.Title);
         }
 
@@ -270,181 +286,226 @@ namespace Lw5Sharp_tests
         }
     }
 
-    public class CommandTest
+    [Collection("Document generator")]
+    public class CommandTest : IClassFixture<CDocument>
     {
-        private IDocument d { get; set; } = new CDocument();
-        private CMenu _menu { get; set; }
+        private CMenu _menu = new(Console.In, Console.Out);
 
-        private void LearnMenu(CMenu m)
+        private readonly CDocument _document;
+
+        public CommandTest()
         {
-            m.AddItem("help", "Show all instructions", m.ShowInstructions);
-            m.AddItem("exit", "Exit from programm", m.Exit);
-            m.AddItem("title", "Set new title for document                      <newTitle>", (_1) => m.SetTitle(d, _1));
-            m.AddItem("list", "Show info about document", (_1) => m.ShowList(d, _1));
-            m.AddItem("undo", "Cancels the last action", (_1) => m.Undo(d, _1));
-            m.AddItem("redo", "Restores the canceled action", (_1) => m.Redo(d, _1));
-            m.AddItem("ip", "Inserts a paragraph in the appropriate position    <position>|end <text>", (_1) => m.InsertParagraph(d, _1));
-            m.AddItem("ii", "Inserts a image in the appropriate position        <position>|end <width> <height> <path>", (_1) => m.InsertImage(d, _1));
-            m.AddItem("rpt", "Replace paragraph text                            <position> <newText>", (_1) => m.ReplaceText(d, _1));
-            m.AddItem("ris", "Resize image                                      <position> <newWidth> <newHeight>", (_1) => m.ResizeImage(d, _1));
-            m.AddItem("del", "Delete item from position                         <position>", (_1) => m.DeleteItem(d, _1));
-            m.AddItem("save", "Save html document                               <FilePath>", (_1) => m.SaveDocument(d, _1));
-        }
-
-        const string HELP_COMMAND_OUTPUT = "Command list:\r\n" +
-                "\thelp: Show all instructions\r\n" +
-                "\texit: Exit from programm\r\n" +
-                "\ttitle: Set new title for document                      <newTitle>\r\n" +
-                "\tlist: Show info about document\r\n\tundo: Cancels the last action\r\n" +
-                "\tredo: Restores the canceled action\r\n" +
-                "\tip: Inserts a paragraph in the appropriate position    <position>|end <text>\r\n" +
-                "\tii: Inserts a image in the appropriate position        <position>|end <width> <height> <path>\r\n" +
-                "\trpt: Replace paragraph text                            <position> <newText>\r\n" +
-                "\tris: Resize image                                      <position> <newWidth> <newHeight>\r\n" +
-                "\tdel: Delete item from position                         <position>\r\n" +
-                "\tsave: Save html document                               <FilePath>\r\n>";
-
-
-        [Fact]
-        public void ExitCommandTest()
-        {
-            var sr = new StringReader("exit\n");
-            var sw = new StringWriter();
-            _menu = new CMenu(sr, sw);
-
-            LearnMenu(_menu);
-            _menu.Run();
-            Assert.Equal(HELP_COMMAND_OUTPUT, sw.ToString());
-        }
-
-        [Fact]
-        public void HelpCommandTest()
-        {
-            var sr = new StringReader("help\nexit\n");
-            var sw = new StringWriter();
-            _menu = new CMenu(sr, sw);
-
-            LearnMenu(_menu);
-            _menu.Run();
-            Assert.Equal(HELP_COMMAND_OUTPUT + HELP_COMMAND_OUTPUT, sw.ToString());
-        }
-
-        [Fact]
-        public void SetTitleCommandTest()
-        {
-            var sr = new StringReader("title test test\nexit\n");
-            var sw = new StringWriter();
-            _menu = new CMenu(sr, sw);
-            LearnMenu(_menu);
-            _menu.Run();
-
-
-            Assert.Equal(">", sw.ToString().Replace(HELP_COMMAND_OUTPUT, ""));
-            Assert.Equal("test test ", d.Title);
-        }
-
-        [Fact]
-        public void InsertParagraphCommandTest()
-        {
-            var sr = new StringReader("list\nip end text\nip end text2\nlist\nexit\n");
-            var sw = new StringWriter();
-            _menu = new CMenu(sr, sw);
-
-            LearnMenu(_menu);
-            _menu.Run();
-
-            Assert.Equal(2, d.GetItemsCount());
-        }
-
-        [Fact]
-        public void InsertImageCommandTest()
-        {
-            var sr = new StringReader("list\nii end 100 100 C:/DEV/test.jpg\nii end 100 100 C:/DEV/test.jpg\nlist\nexit\n");
-            var sw = new StringWriter();
-            _menu = new CMenu(sr, sw);
-
-            LearnMenu(_menu);
-            _menu.Run();
-
-            Assert.Equal(2, d.GetItemsCount());
-        }
-
-        [Fact]
-        public void ReplaceTextCommandTest()
-        {
-            var sr = new StringReader("ip end text\nrpt 0 test\nexit\n");
-            var sw = new StringWriter();
-            _menu = new CMenu(sr, sw);
-
-            LearnMenu(_menu);
-            _menu.Run();
-
-            Assert.Equal(1, d.GetItemsCount());
-            Assert.Equal("test ", d.GetItem(0).Paragraph?.Text);
-        }
-
-        [Fact]
-        public void ResizeImageCommandTest()
-        {
-            var sr = new StringReader("ii end 100 100 C:/DEV/test.jpg\nris 0 200 200\nexit\n");
-            var sw = new StringWriter();
-            _menu = new CMenu(sr, sw);
-
-            LearnMenu(_menu);
-            _menu.Run();
-
-            Assert.Equal(1, d.GetItemsCount());
-            Assert.True(Validator.ValidateImage(d, 0, "C:/DEV/test.jpg", 200, 200));
+            _document = new CDocument();
         }
 
         [Theory]
-        [InlineData("", "undo\n")]
-        [InlineData("ABOBA ", "undo\nredo\n")]
-        public void UndoRedoCommandTest(string requireTitle, string command)
+        [InlineData("title test", "test ")]
+        [InlineData("title test test", "test test ")]
+        public void SetTitleCommand(string command, string require)
         {
-            var sr = new StringReader($"title ABOBA\n{command}exit\n");
+            var sr = new StringReader($"{command}\nexit\n");
             var sw = new StringWriter();
+
             _menu = new CMenu(sr, sw);
 
-            LearnMenu(_menu);
+            _menu.AddItem("title", "", (_1) => DocumentController.SetTitle(_document, _1));
+            _menu.AddItem("exit", "", _menu.Exit);
+
             _menu.Run();
 
-            Assert.Equal(requireTitle, d.Title);
+            Assert.Equal(require, _document.Title);
+            _document.Undo();
+            Assert.Equal("", _document.Title);
+            _document.Redo();
+            Assert.Equal(require, _document.Title);
         }
 
         [Fact]
-        public void DelCommandTest()
+        public void SetTitleNoArguments()
         {
-            var sr = new StringReader($"ip end title\ndel 0\nexit\n");
+            var sr = new StringReader($"title\nexit\n");
             var sw = new StringWriter();
+
             _menu = new CMenu(sr, sw);
 
-            LearnMenu(_menu);
+            _menu.AddItem("title", "", (_1) => DocumentController.SetTitle(_document, _1));
+            _menu.AddItem("exit", "", _menu.Exit);
+
             _menu.Run();
 
-            Assert.Equal(0, d.GetItemsCount());
+            bool result = sw.ToString().Contains("Invalid arguments count");
+
+            Assert.True(result);
+        }
+
+        [Theory]
+        [InlineData("ip 0 ABC", "ABC ")]
+        [InlineData("ip end ABC", "ABC ")]
+        [InlineData("ip 0 ABC ABC", "ABC ABC ")]
+        [InlineData("ip end ABC ABC", "ABC ABC ")]
+        public void InsertParagraph(string command, string require)
+        {
+            var sr = new StringReader($"{command}\nexit\n");
+            var sw = new StringWriter();
+
+            _menu = new CMenu(sr, sw);
+
+            _menu.AddItem("ip", "", (_1) => DocumentController.InsertParagraph(_document, _1));
+            _menu.AddItem("exit", "", _menu.Exit);
+
+            _menu.Run();
+
+            Assert.Equal(require, _document.GetItem(0).Paragraph?.Text);
+            _document.Undo();
+            Assert.Equal(0, _document.GetItemsCount());
+            _document.Redo();
+            Assert.Equal(1, _document.GetItemsCount());
+            Assert.Equal(require, _document.GetItem(0).Paragraph?.Text);
         }
 
         [Fact]
-        public void SaveCommandTest()
+        public void InsertParagraphNoArguments()
         {
-            var sr = new StringReader($"ip end paragraph\ntitle TITLE\nii end 100 100 C:/DEV/test.jpg\nsave C:/DEV/index.html\nexit\n");
+            var sr = new StringReader($"ip\nexit\n");
             var sw = new StringWriter();
+
             _menu = new CMenu(sr, sw);
 
-            LearnMenu(_menu);
+            _menu.AddItem("ip", "", (_1) => DocumentController.InsertParagraph(_document, _1));
+            _menu.AddItem("exit", "", _menu.Exit);
+
             _menu.Run();
 
-            using (StreamReader reader = new StreamReader("C:/DEV/index.html"))
-            {
+            bool result = sw.ToString().Contains("Invalid arguments count");
 
-                string result = reader.ReadToEnd();
-                Assert.Equal("<html>\r\n" +
-                    "<h1>TITLE </h1>\r\n" +
-                    "<p>paragraph </p>\r\n" +
-                    "<img src=\"images/img0.jpg\" width=\"100\" height=\"100\"/ >\r\n" +
-                    "</html>\r\n", result);
-            }
+            Assert.True(result);
+
+        }
+
+        [Theory]
+        [InlineData("ii 0 100 100 C:/DEV/test.jpg")]
+        [InlineData("ii end 100 100 C:/DEV/test.jpg")]
+        public void InsertImage(string command)
+        {
+            var sr = new StringReader($"{command}\nexit\n");
+            var sw = new StringWriter();
+
+            _menu = new CMenu(sr, sw);
+
+            _menu.AddItem("ii", "", (_1) => DocumentController.InsertImage(_document, _1));
+            _menu.AddItem("exit", "", _menu.Exit);
+
+            _menu.Run();
+
+            Assert.True(Validator.ValidateImage(_document, 0, "C:/DEV/test.jpg", 100, 100));
+            _document.Undo();
+            Assert.Equal(0, _document.GetItemsCount());
+            _document.Redo();
+            Assert.Equal(1, _document.GetItemsCount());
+            Assert.True(Validator.ValidateImage(_document, 0, "C:/DEV/test.jpg", 100, 100));
+        }
+
+        [Theory]
+        [InlineData("ii 0 100 100", "Invalid arguments count")]
+        [InlineData("ii 0 100", "Invalid arguments count")]
+        [InlineData("ii 0", "Invalid arguments count")]
+        [InlineData("ii", "Invalid arguments count")]
+        public void InsertImageNoArguments(string command, string require)
+        {
+            var sr = new StringReader($"{command}\nexit\n");
+            var sw = new StringWriter();
+
+            _menu = new CMenu(sr, sw);
+
+            _menu.AddItem("ii", "", (_1) => DocumentController.InsertImage(_document, _1));
+            _menu.AddItem("exit", "", _menu.Exit);
+
+            _menu.Run();
+
+            bool result = sw.ToString().Contains(require);
+
+            Assert.True(result);
+        }
+
+        [Theory]
+        [InlineData("undo")]
+        [InlineData("undo\nundo")]
+        public void UndoTest(string command)
+        {
+            _document.SetTitle("test ");
+
+            var sr = new StringReader($"{command}\nexit\n");
+            var sw = new StringWriter();
+
+            _menu = new CMenu(sr, sw);
+
+            _menu.AddItem("undo", "", (_1) => DocumentController.Undo(_document, _1));
+            _menu.AddItem("exit", "", _menu.Exit);
+
+            _menu.Run();
+
+            Assert.Equal("", _document.Title);
+        }
+
+        [Theory]
+        [InlineData("redo")]
+        [InlineData("redo\nredo")]
+        public void RedoTest(string command)
+        {
+            _document.SetTitle("test ");
+            _document.Undo();
+
+            var sr = new StringReader($"{command}\nexit\n");
+            var sw = new StringWriter();
+
+            _menu = new CMenu(sr, sw);
+
+            _menu.AddItem("redo", "", (_1) => DocumentController.Redo(_document, _1));
+            _menu.AddItem("exit", "", _menu.Exit);
+
+            _menu.Run();
+
+            Assert.Equal("test ", _document.Title);
+        }
+
+        [Theory]
+        [InlineData("rpt 0 new", "new")]
+        [InlineData("rpt 0 new text", "new text")]
+        public void ReplaceText(string command, string require)
+        {
+            _document.InsertParagraph("ad");
+            
+            var sr = new StringReader($"{command}\nexit\n");
+            var sw = new StringWriter();
+
+            _menu = new CMenu(sr, sw);
+
+            _menu.AddItem("rpt", "", (_1) => DocumentController.ReplaceText(_document, _1));
+            _menu.AddItem("exit", "", _menu.Exit);
+
+            _menu.Run();
+
+            Assert.Equal(require, _document.GetItem(0).Paragraph?.Text);
+        }
+
+        [Theory]
+        [InlineData("ris 0 200 100", 100, 200)]
+        [InlineData("ris 0 500 0", 0, 500)]
+        public void ResizeImage(string command, int requireheight, int requireWidth)
+        {
+            _document.InsertImage("C:/DEV/test.jpg", 5, 5);
+
+            var sr = new StringReader($"{command}\nexit\n");
+            var sw = new StringWriter();
+
+            _menu = new CMenu(sr, sw);
+
+            _menu.AddItem("ris", "", (_1) => DocumentController.ResizeImage(_document, _1));
+            _menu.AddItem("exit", "", _menu.Exit);
+
+            _menu.Run();
+
+            Assert.True(Validator.ValidateImage(_document, 0, "C:/DEV/test.jpg", requireWidth, requireheight));
         }
     }
 }

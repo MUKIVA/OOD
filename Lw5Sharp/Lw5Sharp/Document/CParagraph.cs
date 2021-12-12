@@ -10,5 +10,10 @@ namespace Document
         }
 
         public string Text { get; set; }
+
+        public void ReplaceText(string text)
+        {
+            Text = text.Trim();
+        }
     }
 }

@@ -15,7 +15,7 @@ namespace Document
         private List<CAbstractCommand> _commands = new List<CAbstractCommand>(1);
 
         public bool CanUndo() => _currentCommandIndex > 0;
-        public bool CanRedo() => _currentCommandIndex < _commands.Count;
+        public bool CanRedo() => _currentCommandIndex + 1 <= _commands.Count;
 
         public void Undo()
         {

@@ -5,7 +5,9 @@ VisualStudioVersion = 17.1.31911.260
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lw5Sharp", "Lw5Sharp\Lw5Sharp.csproj", "{0931CB73-3340-42C2-90D6-B691420C1803}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Lw5Sharp_tests", "Lw5Sharp_tests\Lw5Sharp_tests.csproj", "{A8DE8CC7-7276-4BA6-994B-5F0512C52C54}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Lw5Sharp_tests", "Lw5Sharp_tests\Lw5Sharp_tests.csproj", "{A8DE8CC7-7276-4BA6-994B-5F0512C52C54}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Task2", "Task2\Task2.csproj", "{65A54B50-8B1A-40CD-ABFB-DB956917ED01}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{A8DE8CC7-7276-4BA6-994B-5F0512C52C54}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A8DE8CC7-7276-4BA6-994B-5F0512C52C54}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A8DE8CC7-7276-4BA6-994B-5F0512C52C54}.Release|Any CPU.Build.0 = Release|Any CPU
+		{65A54B50-8B1A-40CD-ABFB-DB956917ED01}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{65A54B50-8B1A-40CD-ABFB-DB956917ED01}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{65A54B50-8B1A-40CD-ABFB-DB956917ED01}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{65A54B50-8B1A-40CD-ABFB-DB956917ED01}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

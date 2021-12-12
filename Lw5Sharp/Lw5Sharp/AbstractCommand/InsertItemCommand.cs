@@ -18,7 +18,7 @@ namespace Document
         public InsertItemCommand(List<CDocumentItem> items, CDocumentItem item, int position)
         {
             _items = items;
-            _item = item;
+            _item = (CDocumentItem)item.Clone();
             _position = position;
 
             Assert.AssertionPosition(_position, _items.Count());

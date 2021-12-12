@@ -8,7 +8,7 @@ namespace Document
 {
     public class SetTitleCommand : CAbstractCommand
     {
-        private IDocument _document;
+        private readonly IDocument _document;
         private readonly string _newTitle;
         private readonly string _oldTitle;
 
