@@ -1,0 +1,49 @@
+﻿<Application x:Class="Lw9.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:m ="clr-namespace:Lw9.Model"
+             xmlns:vm="clr-namespace:Lw9.ViewModel"
+             xmlns:local="clr-namespace:Lw9"
+             StartupUri="View/MainWindowView.xaml">
+    <Application.Resources>
+
+        <DataTemplate x:Key="TriangleTemplate">
+            <Polygon HorizontalAlignment="Center" 
+                     VerticalAlignment="Center" 
+                     Width="{Binding Width}" 
+                     Height="{Binding Height}" 
+                     Fill="Black" 
+                     StrokeThickness="3"
+                     Stroke="Red" 
+                     Points="{Binding Points}"/>
+        </DataTemplate>
+
+        <DataTemplate x:Key="EllipseTemplate">
+            <Ellipse HorizontalAlignment="Center"
+                     VerticalAlignment="Center"
+                     Width="{Binding Width}"
+                     Height="{Binding Height}"
+                     Fill="Black"
+                     StrokeThickness="3"
+                     Stroke="Red"/>
+
+        </DataTemplate>
+
+        <DataTemplate x:Key="RectangleTemplate">
+            <Rectangle Width="{Binding Width}" 
+                       Height="{Binding Height}" 
+                       Fill="Black" 
+                       StrokeThickness="3" 
+                       Stroke="Red" />
+        </DataTemplate>
+         
+
+        <local:ShapeDataSelector x:Key="ShapeDataSelector" 
+                                 Triangle="{StaticResource TriangleTemplate}"
+                                 Rectangle="{StaticResource RectangleTemplate}"
+                                 Ellipse="{StaticResource EllipseTemplate}"/>
+
+
+
+    </Application.Resources>
+</Application>
