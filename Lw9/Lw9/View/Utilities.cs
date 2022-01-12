@@ -12,7 +12,7 @@ using Lw9.ViewModel;
 using System.Windows.Shapes;
 
 
-namespace Lw9.DragDrop
+namespace Lw9.View
 {
     public static class Utilities
     {

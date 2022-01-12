@@ -4,8 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:i="http://schemas.microsoft.com/xaml/behaviors"
-             xmlns:dd="clr-namespace:Lw9.DragDrop"
-             xmlns:local="clr-namespace:Lw9.View"
+             xmlns:v="clr-namespace:Lw9.View"
              mc:Ignorable="d" 
              x:Name="FarameViewWindow"
              d:DesignHeight="300" d:DesignWidth="300"
@@ -24,13 +23,13 @@
                 </Style>
             </Border.Resources>
         <Canvas x:Name="ContentField"
-                    dd:ResizeControl.BottomLeftMarker="{Binding ElementName=bottomLeft}"
-                    dd:ResizeControl.BottomRightMarker="{Binding ElementName=bottomRight}"
-                    dd:ResizeControl.TopLeftMarker="{Binding ElementName=topLeft}"
-                    dd:ResizeControl.TopRightMarker="{Binding ElementName=topRight}"
-                    dd:ResizeControl.IsResizeFrame="True"
-                    dd:ResizeControl.FrameContainer="{Binding ElementName=FarameViewWindow}"
-                    dd:ResizeControl.DragContainer="{Binding BindPanel, ElementName=FarameViewWindow}">
+                    v:ResizeControl.BottomLeftMarker="{Binding ElementName=bottomLeft}"
+                    v:ResizeControl.BottomRightMarker="{Binding ElementName=bottomRight}"
+                    v:ResizeControl.TopLeftMarker="{Binding ElementName=topLeft}"
+                    v:ResizeControl.TopRightMarker="{Binding ElementName=topRight}"
+                    v:ResizeControl.IsResizeFrame="True"
+                    v:ResizeControl.FrameContainer="{Binding ElementName=FarameViewWindow}"
+                    v:ResizeControl.DragContainer="{Binding BindPanel, ElementName=FarameViewWindow}">
             <Rectangle
                     x:Name="topLeft"
                     RadiusX="2" RadiusY="2" Canvas.Top="-7" Canvas.Left="-7" Height="14" Width="14" Fill="DarkOliveGreen"/>

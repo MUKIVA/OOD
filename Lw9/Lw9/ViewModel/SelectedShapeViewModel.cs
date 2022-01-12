@@ -13,17 +13,14 @@ namespace Lw9.ViewModel
 {
     public class SelectedShapeViewModel : INotifyPropertyChanged
     {
-        private ShapeModel? _selectedShape;
-        private CanvasModel _canvasModel;
-        private ICommand? _resize;
-
+        private ShapeViewModel? _selectedShape;
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public SelectedShapeViewModel(CanvasModel canvasModel)
+        public SelectedShapeViewModel()
         {
-            _canvasModel = canvasModel;
         }
-        public ShapeModel? SelectedShape
+
+        public ShapeViewModel? SelectedShape
         {
             get { return _selectedShape; }
             set
@@ -32,23 +29,6 @@ namespace Lw9.ViewModel
                 _selectedShape = value;
                 OnPropertyChanged("SelectedShape");
             }
-        }
-        public ICommand Resize
-        {
-            get => _resize!;
-            set
-            {
-                if (_resize == value) return;
-                _resize = value;
-                OnPropertyChanged("Resize");
-            }
-        }
-        public void SetSelectedShapePosition(double x, double y)
-        {
-            if (_selectedShape == null) return;
-
-            _selectedShape.CanvasLeft = x;
-            _selectedShape.CanvasTop = y;
         }
         void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

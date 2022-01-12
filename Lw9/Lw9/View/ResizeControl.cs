@@ -11,7 +11,7 @@ using Lw9.Model;
 using Lw9.ViewModel;
 using System.Windows.Shapes;
 
-namespace Lw9.DragDrop
+namespace Lw9.View
 {
     public class ResizeControl
     {
@@ -29,7 +29,6 @@ namespace Lw9.DragDrop
         private FrameworkElement? _bottomLeftMarker;
         private FrameworkElement? _topLeftMarker;
         private FrameworkElement? _topRightMarker;
-
 
         #region IsResizeFrame
 

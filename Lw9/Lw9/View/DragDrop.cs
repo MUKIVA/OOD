@@ -11,16 +11,16 @@ using Lw9.Model;
 using Lw9.ViewModel;
 using System.Windows.Shapes;
 
-namespace Lw9.DragDrop
+namespace Lw9.View
 {
     public class DragDrop
     {
         private FrameworkElement? _dragContainer;      // Поле относительно которого будут смотреться координаты
-        private Boolean _mouseCaptured;      // Проверка захвата
-        private Point _initialMousePosition; // Старые координаты объекта
-        private Point _delta;                // Разница между старыми координатами и новыми
+        private Boolean _mouseCaptured;                // Проверка захвата
+        private Point _initialMousePosition;           // Старые координаты объекта
+        private Point _delta;                          // Разница между старыми координатами и новыми
         private Point _oldPosition;
-        private ICommand? _dropCommand;      // Команда выполняющаяся после отжатия мыши
+        private ICommand? _dropCommand;                // Команда выполняющаяся после отжатия мыши
         private FrameworkElement? _capturedObject;
         private Window? _window;
 
@@ -86,14 +86,11 @@ namespace Lw9.DragDrop
             {
                 dragSource.PreviewMouseLeftButtonDown += Instance.CaptureShape;
                 dragSource.PreviewMouseLeftButtonUp += Instance.ReleazeShape;
-                //dragSource.PreviewMouseMove += Instance.DragSource_PreviewMouseMove;
-                
             }
             else
             {
                 dragSource.PreviewMouseLeftButtonDown -= Instance.CaptureShape;
                 dragSource.PreviewMouseLeftButtonUp -= Instance.ReleazeShape;
-                //dragSource.PreviewMouseMove -= Instance.DragSource_PreviewMouseMove;
             }
         }
 
@@ -111,10 +108,21 @@ namespace Lw9.DragDrop
             if (element == null) return;
 
             _dragContainer = GetDragContainer(element);                   // Получаем доступ к области перемещения        
+            //ISelectField? selectField = _dragContainer.DataContext as ISelectField;
+            //object? selectedObject = selectField?.GetSelectObject();
+
+            //object content = _capturedObject;
+
+            //if (Utilities.TryGetContent(_capturedObject) != null)
+            //    content = Utilities.TryGetContent(_capturedObject)!;
+
+            //if (selectedObject != content) return;
 
             _dropCommand = GetDroppedCommand(element);                 // Получаем пост команду из зависимого объекта
             _initialMousePosition = e.GetPosition(_dragContainer);     // Запоминаем координаты нажатия
             _mouseCaptured = true;                                     // Говорим, что мышка зажата 
+
+           
 
             _dragContainer!.PreviewMouseMove += MouseMoveHandler;
             _capturedObject.PreviewMouseMove += MouseMoveHandler;

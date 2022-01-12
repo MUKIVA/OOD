@@ -1,4 +1,5 @@
 ﻿using Lw9.Model;
+using Lw9.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -10,9 +11,9 @@ using System.IO;
 
 namespace Lw9.DialogService
 {
-    public class JsonFileService : IFileService
+    public class JsonFileService : IFileService<ShapeModel>
     {
-        public List<ShapeModel> Open(string filePath)
+        public List<ShapeModel> OpenCollection(string filePath)
         {
             List<ShapeModel>? shapes = new();
             DataContractJsonSerializer jsonFormatter =
@@ -25,12 +26,12 @@ namespace Lw9.DialogService
             return shapes!;
         }
 
-        public void Save(string filePath, List<ShapeModel> canvasData)
+        public void SaveCollection(string filePath, List<ShapeModel> data)
         {
             DataContractJsonSerializer jsonFormater = new DataContractJsonSerializer(typeof(List<ShapeModel>));
             using (FileStream fs = new FileStream(filePath, FileMode.Create))
             {
-                jsonFormater.WriteObject(fs, canvasData);
+                jsonFormater.WriteObject(fs, data);
             }
         }
     }

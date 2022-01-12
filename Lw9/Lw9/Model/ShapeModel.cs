@@ -19,25 +19,7 @@ namespace Lw9.Model
         private double _canvasLeft;
         private double _canvasTop;
         private ShapeType _shapeType;
-        private HistoryService.HistoryService _history;
-
-        private PointCollection GetPointCollection()
-        {
-            PointCollection points = new PointCollection();
-            points.Add(new System.Windows.Point(0, _height));
-            points.Add(new System.Windows.Point(_width, _height));
-            points.Add(new System.Windows.Point(_width / 2, 0));
-            return points;
-        }
-
-        public PointCollection Points
-        {
-            get => GetPointCollection();
-            set
-            {
-                OnPropertyChanged("Points");
-            }
-        }
+        public event PropertyChangedEventHandler? PropertyChanged;
 
         public ShapeType ShapeType
         {
@@ -47,7 +29,6 @@ namespace Lw9.Model
                 _shapeType = value;
             }
         }
-        
         public double Width
         {
             get { return _width; }
@@ -55,11 +36,9 @@ namespace Lw9.Model
             {
                 if (_width == value) return;
                 _width = value;
-                Points = null!;
                 OnPropertyChanged("Width");
             }
         }
-
         public double Height
         {
             get { return _height; }
@@ -67,11 +46,9 @@ namespace Lw9.Model
             {
                 if (_height == value) return;
                 _height = value;
-                Points = null!;
                 OnPropertyChanged("Height");
             }
         }
-
         public double CanvasLeft
         {
             get { return _canvasLeft; }
@@ -82,7 +59,6 @@ namespace Lw9.Model
                 OnPropertyChanged("CanvasLeft");
             }
         }
-
         public double CanvasTop
         {
             get { return _canvasTop; }
@@ -93,16 +69,10 @@ namespace Lw9.Model
                 OnPropertyChanged("CanvasTop");
             }
         }
-
         public ShapeModel(ShapeType type, double width, double height, double left, double top) 
             => (_shapeType, _width, _height, _canvasLeft, _canvasTop) 
              = (type,       width,  height,  left,        top);
-        public ShapeModel()
-        {
-            
-        }
-
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public ShapeModel() {}
         void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

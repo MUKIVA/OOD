@@ -9,25 +9,31 @@ using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows;
 using System.Windows.Controls;
+using System.Collections.Specialized;
 
 namespace Lw9.ViewModel
 {
     public class CanvasViewModel : INotifyPropertyChanged, ISelectField
     {
         private CanvasModel _canvasModel;
+        private ObservableCollection<ShapeViewModel> _shapes = new();
         private SelectedShapeViewModel _selectedShapeViewModel;
         private ICommand? _resetSelectionShape;
         private ICommand? _selectShape;
+        private ICommand? _addTriangle;
+        private ICommand? _addRectangle;
+        private ICommand? _addEllipse;
+        private ICommand? _deleteShape;
         public event PropertyChangedEventHandler? PropertyChanged;
         public CanvasViewModel(CanvasModel canvasModel, SelectedShapeViewModel selectedShapeVM)
         {
             _canvasModel = canvasModel;
             _selectedShapeViewModel = selectedShapeVM;
+            _canvasModel.PropertyChanged += (s, e) => { if (e.PropertyName == "Width") OnPropertyChanged("Width");   };
+            _canvasModel.PropertyChanged += (s, e) => { if (e.PropertyName == "Height") OnPropertyChanged("Height"); };
+            _canvasModel.Shapes.CollectionChanged += HandleCollectionChanged;
         }
-        public CanvasModel CanvasModel
-        {
-            get { return _canvasModel; }
-        }
+        
         public SelectedShapeViewModel SelectedShapeVM
         {
             get { return _selectedShapeViewModel; }
@@ -42,7 +48,7 @@ namespace Lw9.ViewModel
         {
             get => _selectShape ?? (_selectShape = new DelegateCommand((shape) => 
             {
-                _selectedShapeViewModel.SelectedShape = shape as ShapeModel;
+                _selectedShapeViewModel.SelectedShape = shape as ShapeViewModel;
             }));
         }
         public ICommand ResetSelectionShape
@@ -61,13 +67,84 @@ namespace Lw9.ViewModel
         {
             ResetSelectionShape.Execute(null);
         }
-        public void SetObjectPosition(double x, double y)
-        {
-            SelectedShapeVM.SetSelectedShapePosition(x, y);
-        }
-        public object? GetDraggingObject()
+
+        public object? GetSelectObject()
         {
             return SelectedShapeVM.SelectedShape;
+        }
+
+        public ObservableCollection<ShapeViewModel> Shapes
+        {
+            get => _shapes;
+            set => _shapes = value;
+        }
+
+        public int Height
+        {
+            get => _canvasModel.Height;
+            set => _canvasModel.Height = value;
+        }
+
+        public int Width
+        {
+            get => _canvasModel.Width;
+            set => _canvasModel.Width = value;
+        }
+
+        public ICommand DeleteShape
+        {
+            get => _deleteShape ?? (_deleteShape = new DelegateCommand(x =>
+            {
+                if (SelectedShapeVM.SelectedShape == null) return;
+                _canvasModel.RemoveShapeByIndex(_shapes.IndexOf(SelectedShapeVM.SelectedShape));
+                _selectedShapeViewModel.SelectedShape = null;
+            }, (x) => _selectedShapeViewModel.SelectedShape != null));
+        }
+        public ICommand AddTriangle
+        {
+            get
+            {
+                return _addTriangle ?? (_addTriangle = new DelegateCommand(obj =>
+                {
+                    _canvasModel.Shapes
+                    .Add(new ShapeModel(Common.ShapeType.Triangle, 100, 100, 100, 100));
+                }));
+            }
+        }
+        public ICommand AddRectangle
+        {
+            get
+            {
+                return _addRectangle ?? (_addRectangle = new DelegateCommand(obj =>
+                {
+                    _canvasModel.Shapes
+                    .Add(new ShapeModel(Common.ShapeType.Rectangle, 100, 100, 100, 100));
+                }));
+            }
+        }
+        public ICommand AddEllipse
+        {
+            get
+            {
+                return _addEllipse ?? (_addEllipse = new DelegateCommand(obj =>
+                {
+                    _canvasModel.Shapes
+                    .Add(new ShapeModel(Common.ShapeType.Ellipse, 100, 100, 100, 100));
+                }));
+            }
+        }
+
+        private void HandleCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
+        {
+            if (e.Action == NotifyCollectionChangedAction.Add)
+            {
+                _shapes.Add(new ShapeViewModel(((ObservableCollection<ShapeModel>)sender!)[e.NewStartingIndex]));
+            }
+
+            if (e.Action == NotifyCollectionChangedAction.Remove)
+            {
+                _shapes.Remove(_shapes[e.OldStartingIndex]);
+            }
         }
     }
 }

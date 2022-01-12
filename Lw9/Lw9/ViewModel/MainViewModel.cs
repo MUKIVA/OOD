@@ -15,33 +15,39 @@ namespace Lw9.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
-        private CanvasViewModel _canvas;
-        private ToolBarViewModel _toolBar;
+        private CanvasViewModel _canvasVM;
+        private ShapeListViewModel _shapeListViewModel;
+        private CanvasModel _canvasModel;
         private string _lastSavePath = string.Empty;
         private ICommand? _saveFileCanvasData;
         private ICommand? _saveAsFileCanvasData;
         private ICommand? _openFile;
-        private IFileService _fileService = new JsonFileService();
+        private IFileService<ShapeModel> _fileService = new JsonFileService();
         private IDialogService _dialogService = new DefaultDialogService();
         public event PropertyChangedEventHandler? PropertyChanged;
 
         public MainViewModel()
         {
-            CanvasModel canvasModel = new();
-            SelectedShapeViewModel selectedShapeVM = new(canvasModel);
-            _canvas = new CanvasViewModel(canvasModel, selectedShapeVM);
-            _toolBar = new ToolBarViewModel(canvasModel, selectedShapeVM);
+            _canvasModel = new();
+            SelectedShapeViewModel selectedShapeVM = new();
+            _shapeListViewModel = new ShapeListViewModel(_canvasModel, selectedShapeVM);
+            _canvasVM = new CanvasViewModel(_canvasModel, selectedShapeVM);
         }
         public CanvasViewModel CanvasVM
         {
-            get { return _canvas; }
+            get { return _canvasVM; }
             set
             {
-                if (_canvas == value) return;
-                _canvas = value;
+                if (_canvasVM == value) return;
+                _canvasVM = value;
                 OnPropertyChanged("Canvas");
-
             }
+        }
+
+        public ShapeListViewModel ShapeInfoVM
+        {
+            get => _shapeListViewModel;
+            set => _shapeListViewModel = value;
         }
         public ICommand SaveAsFileCanvasData
         {
@@ -49,10 +55,10 @@ namespace Lw9.ViewModel
             {
                 try
                 {
-                    var data = CanvasVM.CanvasModel.Shapes;
+                    var data = _canvasModel.Shapes;
                     if (_dialogService.SaveFileDialog())
                     {
-                        _fileService.Save(_dialogService.FilePath, data.ToList());
+                        _fileService.SaveCollection(_dialogService.FilePath, data.ToList());
                         _dialogService.ShowMessage("Файл сохранен");
                         _lastSavePath = _dialogService.FilePath;
                     }
@@ -73,8 +79,9 @@ namespace Lw9.ViewModel
                     return;
                 }
 
-                var data = CanvasVM.CanvasModel.Shapes;
-                _fileService.Save(_lastSavePath, data.ToList());
+                var data = _canvasModel.Shapes;
+                _fileService.SaveCollection(_lastSavePath, data.ToList());
+                _dialogService.ShowMessage("Файл сохранен");
 
             }));
         }
@@ -86,12 +93,13 @@ namespace Lw9.ViewModel
                 {
                     if (_dialogService.OpenFileDialog())
                     {
-                        CanvasVM.CanvasModel.Shapes.Clear();
-                        var fileShapesData = _fileService.Open(_dialogService.FilePath);
+                        CanvasVM.Shapes.Clear();
+                        var fileShapesData = _fileService.OpenCollection(_dialogService.FilePath);
                         foreach (ShapeModel shape in fileShapesData)
                         {
-                            CanvasVM.CanvasModel.Shapes.Add(shape);
+                            _canvasModel.Shapes.Add(shape);
                         }
+                        CanvasVM.ResetSelect();
                         _dialogService.ShowMessage("Файл открыт");
                     }
                 }
@@ -101,16 +109,6 @@ namespace Lw9.ViewModel
                 }
 
             }));
-        }
-        public ToolBarViewModel ToolBarVM
-        {
-            get { return _toolBar; }
-            set
-            {
-                if (_toolBar == value) return;
-                _toolBar = value;
-                OnPropertyChanged("ToolBar");
-            }
         }
         void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

@@ -13,6 +13,13 @@ namespace Lw9.Model
         private ObservableCollection<ShapeModel> _shapes = new();
         private int _height;
         private int _width;
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        public CanvasModel()
+        {
+            _height = 480;
+            _width = 640;
+        }
 
         public ObservableCollection<ShapeModel> Shapes
         {
@@ -38,8 +45,14 @@ namespace Lw9.Model
                 OnPropertyChanged("Width");
             }
         }
-        
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public void RemoveShapeByIndex(int index)
+        {
+            if (index >= 0 && index < Shapes.Count)
+            {
+                Shapes.Remove(Shapes[index]);
+            }
+        }
+
         void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

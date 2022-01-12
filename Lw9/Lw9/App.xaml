@@ -8,14 +8,15 @@
     <Application.Resources>
 
         <DataTemplate x:Key="TriangleTemplate">
-            <Polygon HorizontalAlignment="Center" 
+            <Path    HorizontalAlignment="Center" 
                      VerticalAlignment="Center" 
                      Width="{Binding Width}" 
                      Height="{Binding Height}" 
                      Fill="Black" 
                      StrokeThickness="3"
                      Stroke="Red" 
-                     Points="{Binding Points}"/>
+                     Data="M 0 100 L 100 100 50 0 Z"
+                     Stretch="Fill"/>
         </DataTemplate>
 
         <DataTemplate x:Key="EllipseTemplate">
