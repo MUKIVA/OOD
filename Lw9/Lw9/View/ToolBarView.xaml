@@ -13,13 +13,17 @@
                 BorderThickness="0 0 4 0">
         <StackPanel Grid.Column="0">
             <Button Foreground="White" Background="#444" BorderThickness="0" Padding="5" FontWeight="Bold" Margin="0 0 0 10" Height="50" FontSize="15" 
-                    Command="{Binding AddTriangle }">Треугольник</Button>
+                    Command="{Binding CanvasVM.AddTriangle }">Треугольник</Button>
             <Button Foreground="White" Background="#444" BorderThickness="0" Padding="5" FontWeight="Bold" Margin="0 0 0 10" Height="50" FontSize="15" 
-                    Command="{Binding AddRectangle }">Прямоугольник</Button>
+                    Command="{Binding CanvasVM.AddRectangle }">Прямоугольник</Button>
             <Button Foreground="White" Background="#444" BorderThickness="0" Padding="5" FontWeight="Bold" Margin="0 0 0 10" Height="50" FontSize="15" 
-                    Command="{Binding AddEllipse }">Эллипс</Button>
+                    Command="{Binding CanvasVM.AddEllipse }">Эллипс</Button>
             <Button Foreground="White" Background="#444" BorderThickness="0" Padding="5" FontWeight="Bold" Margin="0 0 0 10" Height="50" FontSize="15" 
-                    Command="{Binding DeleteShape }">Удалить</Button>
+                    Command="{Binding CanvasVM.DeleteShape }">Удалить</Button>
+            <Button Foreground="White" Background="#444" BorderThickness="0" Padding="5" FontWeight="Bold" Margin="0 0 0 10" Height="50" FontSize="15" 
+                    Command="{Binding History.UndoCommand }">Undo</Button>
+            <Button Foreground="White" Background="#444" BorderThickness="0" Padding="5" FontWeight="Bold" Margin="0 0 0 10" Height="50" FontSize="15" 
+                    Command="{Binding History.RedoCommand }">Redo</Button>
         </StackPanel>
     </Border>
 </UserControl>

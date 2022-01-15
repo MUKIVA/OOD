@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using Lw9.Model;
+using Lw9.HistoryService;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows;
@@ -24,9 +25,11 @@ namespace Lw9.ViewModel
         private ICommand? _addRectangle;
         private ICommand? _addEllipse;
         private ICommand? _deleteShape;
+        private History _history;
         public event PropertyChangedEventHandler? PropertyChanged;
-        public CanvasViewModel(CanvasModel canvasModel, SelectedShapeViewModel selectedShapeVM)
+        public CanvasViewModel(CanvasModel canvasModel, SelectedShapeViewModel selectedShapeVM, History history)
         {
+            _history = history;
             _canvasModel = canvasModel;
             _selectedShapeViewModel = selectedShapeVM;
             _canvasModel.PropertyChanged += (s, e) => { if (e.PropertyName == "Width") OnPropertyChanged("Width");   };
@@ -96,8 +99,10 @@ namespace Lw9.ViewModel
             get => _deleteShape ?? (_deleteShape = new DelegateCommand(x =>
             {
                 if (SelectedShapeVM.SelectedShape == null) return;
-                _canvasModel.RemoveShapeByIndex(_shapes.IndexOf(SelectedShapeVM.SelectedShape));
+                int index = _shapes.IndexOf(SelectedShapeVM.SelectedShape);
+                _history.AddToHistory(new DeleteShapeCommand(_canvasModel, index));
                 _selectedShapeViewModel.SelectedShape = null;
+
             }, (x) => _selectedShapeViewModel.SelectedShape != null));
         }
         public ICommand AddTriangle
@@ -106,8 +111,8 @@ namespace Lw9.ViewModel
             {
                 return _addTriangle ?? (_addTriangle = new DelegateCommand(obj =>
                 {
-                    _canvasModel.Shapes
-                    .Add(new ShapeModel(Common.ShapeType.Triangle, 100, 100, 100, 100));
+                    _history.AddToHistory(new CreateShapeCommand(
+                        _canvasModel, new ShapeModel(Common.ShapeType.Triangle, 100, 100, 100, 100), SelectedShapeVM));
                 }));
             }
         }
@@ -117,8 +122,8 @@ namespace Lw9.ViewModel
             {
                 return _addRectangle ?? (_addRectangle = new DelegateCommand(obj =>
                 {
-                    _canvasModel.Shapes
-                    .Add(new ShapeModel(Common.ShapeType.Rectangle, 100, 100, 100, 100));
+                    _history.AddToHistory(new CreateShapeCommand(
+                        _canvasModel, new ShapeModel(Common.ShapeType.Rectangle, 100, 100, 100, 100), SelectedShapeVM));
                 }));
             }
         }
@@ -128,8 +133,8 @@ namespace Lw9.ViewModel
             {
                 return _addEllipse ?? (_addEllipse = new DelegateCommand(obj =>
                 {
-                    _canvasModel.Shapes
-                    .Add(new ShapeModel(Common.ShapeType.Ellipse, 100, 100, 100, 100));
+                    _history.AddToHistory(new CreateShapeCommand(
+                        _canvasModel, new ShapeModel(Common.ShapeType.Ellipse, 100, 100, 100, 100), SelectedShapeVM));
                 }));
             }
         }
@@ -138,7 +143,7 @@ namespace Lw9.ViewModel
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                _shapes.Add(new ShapeViewModel(((ObservableCollection<ShapeModel>)sender!)[e.NewStartingIndex]));
+                _shapes.Insert(e.NewStartingIndex, new ShapeViewModel(((ObservableCollection<ShapeModel>)sender!)[e.NewStartingIndex]));
             }
 
             if (e.Action == NotifyCollectionChangedAction.Remove)

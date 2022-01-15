@@ -29,6 +29,7 @@
                     v:ResizeControl.TopRightMarker="{Binding ElementName=topRight}"
                     v:ResizeControl.IsResizeFrame="True"
                     v:ResizeControl.FrameContainer="{Binding ElementName=FarameViewWindow}"
+                    v:ResizeControl.DroppedCommand="{Binding SelectedShapeVM.SaveResize}"
                     v:ResizeControl.DragContainer="{Binding BindPanel, ElementName=FarameViewWindow}">
             <Rectangle
                     x:Name="topLeft"

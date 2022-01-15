@@ -103,7 +103,7 @@ namespace Lw9.View
             DependencyObject? element = sender as DependencyObject;
             _capturedObject = (FrameworkElement)sender;
 
-            _window = Utilities.FindAncestor(typeof(Window), (Visual)sender) as Window;
+            //_window = Utilities.FindAncestor(typeof(Window), (Visual)sender) as Window;
 
             if (element == null) return;
 
@@ -141,13 +141,15 @@ namespace Lw9.View
 
         private void FinalizeEvent(Object sender, MouseEventArgs e)
         {
+            if (!_mouseCaptured) return;
             _mouseCaptured = false;                                     // Говорим, что мышка отжата
             _capturedObject!.PreviewMouseMove -= MouseMoveHandler;
             _dragContainer!.PreviewMouseMove -= MouseMoveHandler;
             if (_window != null)
                 _window.PreviewMouseLeftButtonUp -= ReleazeShape;
-            if (_dropCommand != null && _dropCommand.CanExecute(null))  // Исполняем пост команду
-                _dropCommand.Execute(null);
+
+            if (_dropCommand != null && _dropCommand.CanExecute(null))                  // Исполняем пост команду
+                _dropCommand.Execute(new DragDropEventArgs(_oldPosition));
         }
 
         private void MouseMoveHandler(Object sender, MouseEventArgs e)

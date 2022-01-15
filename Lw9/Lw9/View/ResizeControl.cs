@@ -29,6 +29,25 @@ namespace Lw9.View
         private FrameworkElement? _bottomLeftMarker;
         private FrameworkElement? _topLeftMarker;
         private FrameworkElement? _topRightMarker;
+        private ICommand? _dropCommand;
+
+
+        #region DropCommand
+
+        public static readonly DependencyProperty ItemDroppedProperty = DependencyProperty.RegisterAttached(
+            "DroppedCommand", typeof(ICommand), typeof(ResizeControl), new PropertyMetadata());
+
+        public static ICommand GetDroppedCommand(DependencyObject element)
+        {
+            return (ICommand)element.GetValue(ItemDroppedProperty);
+        }
+
+        public static void SetDroppedCommand(DependencyObject element, ICommand value)
+        {
+            element.SetValue(ItemDroppedProperty, value);
+        }
+
+        #endregion
 
         #region IsResizeFrame
 
@@ -70,6 +89,7 @@ namespace Lw9.View
         private void Initialize(object sender, DependencyPropertyChangedEventArgs e)
         {
 
+            Instance._dropCommand = GetDroppedCommand((DependencyObject)sender);
             Instance._bottomLeftMarker = GetBottomLeftMarker((DependencyObject)sender );
             Instance._bottomRightMarker = GetBottomRightMarker((DependencyObject)sender);
             Instance._topLeftMarker = GetTopLeftMarker((DependencyObject)sender);
@@ -89,9 +109,9 @@ namespace Lw9.View
 
         private void ReleaseMarker(Object sender, MouseButtonEventArgs e)
         {
+            if (_dragContainer == null|| !_mouseCaptured) return;
             _mouseCaptured = false;
 
-            if (_dragContainer == null) return;
 
             _dragContainer!.PreviewMouseMove -= BottomRightHandler;
             _dragContainer.PreviewMouseMove -= BottomLeftHandler;
@@ -103,6 +123,9 @@ namespace Lw9.View
             _topRightMarker!.PreviewMouseMove -= TopRightHandler;
 
             _dragContainer.PreviewMouseLeftButtonUp -= ReleaseMarker;
+
+            if (_dropCommand != null && _dropCommand.CanExecute(null))                  // Исполняем пост команду
+                _dropCommand.Execute(new ResizeEventArgs(_oldPosition, _oldSize.X, _oldSize.Y));
         }
 
         private void CaptureMarker(Object sender, MouseButtonEventArgs e)

@@ -29,29 +29,5 @@ namespace Lw9.View
         {
             return (FrameworkElement)obj;
         }
-
-        public static Type? TryGetType(object obj)
-        {
-            try
-            {
-                return obj.GetType();
-            }
-            catch (Exception)
-            {
-                return null;
-            }
-        }
-
-        public static object? TryGetContent(object obj)
-        {
-            try
-            {
-                return ((ContentPresenter)obj).Content;
-            }
-            catch (Exception)
-            {
-                return null;   
-            }
-        }
     }
 }

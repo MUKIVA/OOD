@@ -28,7 +28,7 @@
         </Grid.RowDefinitions>
         
         <v:MenuView Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"/>
-        <v:ToolBarView DataContext="{Binding CanvasVM}" Grid.Column="0" Grid.Row="1"/>
+        <v:ToolBarView Grid.Column="0" Grid.Row="1"/>
         <v:CanvasView DataContext="{Binding CanvasVM}" Grid.Column="1" Grid.Row="1"/>
         <v:ShapeInfoPanel DataContext="{Binding ShapeInfoVM}" Grid.Column="2" Grid.Row="1" />
     </Grid>

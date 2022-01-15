@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Windows.Media;
 using System.Threading.Tasks;
 using System.Windows.Controls;
+using System.Windows.Input;
 
 namespace Lw9.ViewModel
 {
@@ -53,6 +54,7 @@ namespace Lw9.ViewModel
             get => _model!.ShapeType;
             set => _model!.ShapeType = value;
         }
+        
         void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

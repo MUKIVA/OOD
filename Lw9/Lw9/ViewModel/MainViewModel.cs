@@ -9,6 +9,7 @@ using Lw9.DialogService;
 using System.Collections.ObjectModel;
 using System.Windows.Input;
 using System.Windows;
+using Lw9.HistoryService;
 using System.IO;
 
 namespace Lw9.ViewModel
@@ -22,6 +23,7 @@ namespace Lw9.ViewModel
         private ICommand? _saveFileCanvasData;
         private ICommand? _saveAsFileCanvasData;
         private ICommand? _openFile;
+        private History _historyService = new History();
         private IFileService<ShapeModel> _fileService = new JsonFileService();
         private IDialogService _dialogService = new DefaultDialogService();
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -29,9 +31,9 @@ namespace Lw9.ViewModel
         public MainViewModel()
         {
             _canvasModel = new();
-            SelectedShapeViewModel selectedShapeVM = new();
+            SelectedShapeViewModel selectedShapeVM = new(_historyService);
             _shapeListViewModel = new ShapeListViewModel(_canvasModel, selectedShapeVM);
-            _canvasVM = new CanvasViewModel(_canvasModel, selectedShapeVM);
+            _canvasVM = new CanvasViewModel(_canvasModel, selectedShapeVM, _historyService);
         }
         public CanvasViewModel CanvasVM
         {
@@ -93,7 +95,9 @@ namespace Lw9.ViewModel
                 {
                     if (_dialogService.OpenFileDialog())
                     {
-                        CanvasVM.Shapes.Clear();
+                        _canvasVM.Shapes.Clear();
+                        _canvasModel.Shapes.Clear();
+                        _shapeListViewModel.Shapes.Clear();
                         var fileShapesData = _fileService.OpenCollection(_dialogService.FilePath);
                         foreach (ShapeModel shape in fileShapesData)
                         {
@@ -101,6 +105,7 @@ namespace Lw9.ViewModel
                         }
                         CanvasVM.ResetSelect();
                         _dialogService.ShowMessage("Файл открыт");
+                        _historyService.ClearHistory();
                     }
                 }
                 catch(Exception ex)
@@ -109,6 +114,16 @@ namespace Lw9.ViewModel
                 }
 
             }));
+        }
+        public History History
+        {
+            get => _historyService;
+            set
+            {
+                if (_historyService == value) return;
+                _historyService = value;
+                OnPropertyChanged("History");   
+            }
         }
         void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

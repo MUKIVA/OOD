@@ -32,6 +32,7 @@
                         <Setter Property="v:DragDrop.IsDraggable"         Value="True" />
                         <Setter Property="v:SelectSystem.IsSelectable"    Value="True" />
                         <Setter Property="v:DragDrop.DragContainer"       Value="{Binding ElementName=ShapesContainer}"/>
+                        <Setter Property="v:DragDrop.DroppedCommand"      Value="{Binding DataContext.SelectedShapeVM.SavePosition, ElementName=CanvasViewWindow}" />
                         <Setter Property="v:SelectSystem.SelectContext"   Value="{Binding RelativeSource={RelativeSource 
                                                                                           Mode=FindAncestor, 
                                                                                           AncestorType={x:Type ItemsControl}}, 

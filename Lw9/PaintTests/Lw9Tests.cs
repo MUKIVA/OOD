@@ -101,26 +101,24 @@ namespace PaintTests
             Assert.Equal(require, _canvas.Width);
         }
 
-        [Fact]
-        public void CanvasAddShape()
-        {
-            _canvas.Shapes.Add(new ShapeModel());
-            int shapesCount = _canvas.Shapes.Count;
-            int require = 1;
-            Assert.Equal(require, shapesCount);   
-        }
+        //[Fact]
+        //public void CanvasAddShape()
+        //{
+        //    _canvas.Shapes.Add(new ShapeModel());
+        //    int shapesCount = _canvas.Shapes.Count;
+        //    int require = 1;
+        //    Assert.Equal(require, shapesCount);   
+        //}
 
-        [Fact]
-        public void CanvasRemoveShape()
-        {
-            var shape = new ShapeModel();
-            _canvas.Shapes.Add(shape);
-            _canvas.Shapes.Remove(shape);
-            int shapesCount = _canvas.Shapes.Count;
-            int require = 0;
-            Assert.Equal(require, shapesCount);
-        }
+        //[Fact]
+        //public void CanvasRemoveShape()
+        //{
+        //    var shape = new ShapeModel();
+        //    _canvas.Shapes.Add(shape);
+        //    _canvas.Shapes.Remove(shape);
+        //    int shapesCount = _canvas.Shapes.Count;
+        //    int require = 0;
+        //    Assert.Equal(require, shapesCount);
+        //}
     }
-
-    public class 
 }

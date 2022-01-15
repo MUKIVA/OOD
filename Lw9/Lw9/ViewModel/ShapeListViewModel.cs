@@ -29,7 +29,7 @@ namespace Lw9.ViewModel
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                _shapes.Add(new ShapeViewModel(((ObservableCollection<ShapeModel>)sender!)[e.NewStartingIndex]));
+                _shapes.Insert(e.NewStartingIndex, new ShapeViewModel(((ObservableCollection<ShapeModel>)sender!)[e.NewStartingIndex]));
             }
 
             if (e.Action == NotifyCollectionChangedAction.Remove)
