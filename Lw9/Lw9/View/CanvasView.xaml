@@ -22,7 +22,11 @@
                           v:SelectSystem.IsDeselectField="True">
                 <ItemsControl.ItemsPanel>
                     <ItemsPanelTemplate  >
-                        <Canvas  ClipToBounds="True" x:Name="field"/>
+                        <Canvas  ClipToBounds="True" x:Name="field">
+                            <Canvas.Background>
+                                <ImageBrush x:Name="Brush"  ImageSource="{Binding ImageSource, TargetNullValue={x:Null}}" />
+                            </Canvas.Background>
+                        </Canvas>
                     </ItemsPanelTemplate>
                 </ItemsControl.ItemsPanel>
                 <ItemsControl.ItemContainerStyle>

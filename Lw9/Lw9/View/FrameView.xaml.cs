@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Controls;
+﻿using System.Windows.Controls;
 using System.Windows;
-using System.Windows.Input;
-using System.Windows.Media;
-using Lw9.Model;
-using Lw9.ViewModel;
-using System.Windows.Shapes;
 
 namespace Lw9.View
 {

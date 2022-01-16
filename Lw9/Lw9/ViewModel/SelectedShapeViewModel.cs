@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
-using Lw9.Model;
+﻿using System.ComponentModel;
 using Lw9.HistoryService;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System.Windows;
 
 namespace Lw9.ViewModel
 {
@@ -16,12 +8,12 @@ namespace Lw9.ViewModel
     {
         private ShapeViewModel? _selectedShape;
         public event PropertyChangedEventHandler? PropertyChanged;
-        private History _history;
+        private History? _history;
         private ICommand? _savePosition;
         private ICommand? _saveResize;
 
 
-        public SelectedShapeViewModel(History historyService)
+        public SelectedShapeViewModel(History? historyService = null)
         {
             _history = historyService;
         }
@@ -36,7 +28,6 @@ namespace Lw9.ViewModel
                 OnPropertyChanged("SelectedShape");
             }
         }
-
         public ICommand? SavePosition
         {
             get => _savePosition ?? (_savePosition = new DelegateCommand(positionArgs =>
@@ -45,7 +36,7 @@ namespace Lw9.ViewModel
 
                 if (args.OldPos.X == SelectedShape?.CanvasLeft && args.OldPos.Y == SelectedShape.CanvasTop) return;
 
-                _history.AddToHistory(
+                _history?.AddToHistory(
                     new ChangeFrameCommand(
                         SelectedShape!,
                         args.OldPos,
@@ -53,7 +44,6 @@ namespace Lw9.ViewModel
                         SelectedShape!.Width));
             }));
         }
-
         public ICommand? SaveResize
         {
             get => _saveResize ?? (_saveResize = new DelegateCommand(positionArgs =>
@@ -65,7 +55,7 @@ namespace Lw9.ViewModel
                 && args.OldHeight == SelectedShape.Height
                 && args.OldWidth == SelectedShape.Width) return;
 
-                _history.AddToHistory(
+                _history?.AddToHistory(
                     new ChangeFrameCommand(
                         SelectedShape!,
                         args.OldPos,
@@ -73,7 +63,6 @@ namespace Lw9.ViewModel
                         args.OldWidth));
             }));
         }
-
         void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

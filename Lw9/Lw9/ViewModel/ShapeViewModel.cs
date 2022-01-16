@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Lw9.Model;
+﻿using Lw9.Model;
 using Lw9.Common;
 using System.ComponentModel;
-using System.Windows.Media;
-using System.Threading.Tasks;
-using System.Windows.Controls;
-using System.Windows.Input;
 
 namespace Lw9.ViewModel
 {

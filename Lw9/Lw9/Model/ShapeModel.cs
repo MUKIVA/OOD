@@ -1,14 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Lw9.Common;
-using System.Runtime.Serialization;
+﻿using Lw9.Common;
 using System.ComponentModel;
-using System.Windows.Media;
-using Lw9.HistoryService;
-using System.Windows.Shapes;
 
 namespace Lw9.Model
 {

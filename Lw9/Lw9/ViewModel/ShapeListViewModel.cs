@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using Lw9.Model;
+﻿using Lw9.Model;
 using System.ComponentModel;
-using System.Threading.Tasks;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 
@@ -22,9 +17,8 @@ namespace Lw9.ViewModel
             _selectedShapeViewModel = selectedShape;
             _canvasModel = canvasModel;
             _canvasModel.Shapes.CollectionChanged += HandleCollectionChanged;
-            _selectedShapeViewModel.PropertyChanged += (s, e) => { if (e.PropertyName == "SelectedShape") OnPropertyChanged("SelectedShape"); };
+            //_selectedShapeViewModel.PropertyChanged += (s, e) => { if (e.PropertyName == "SelectedShape") OnPropertyChanged("SelectedShape"); };
         }
-
         private void HandleCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
@@ -36,8 +30,12 @@ namespace Lw9.ViewModel
             {
                 _shapes.Remove(_shapes[e.OldStartingIndex]);
             }
-        }
 
+            if (e.Action == NotifyCollectionChangedAction.Reset)
+            {
+                _shapes.Clear();
+            }
+        }
         public SelectedShapeViewModel SelectedShapeVM
         {
             get => _selectedShapeViewModel;
@@ -48,13 +46,11 @@ namespace Lw9.ViewModel
                 OnPropertyChanged("SelectedShapeViewModel");
             }
         }
-
         public ObservableCollection<ShapeViewModel> Shapes
         {
             get => _shapes;
             set => _shapes = value;
         }
-
         void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }
 }

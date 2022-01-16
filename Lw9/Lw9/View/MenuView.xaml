@@ -13,6 +13,9 @@
             <MenuItem Header="Сохранить" Command="{Binding SaveFileCanvasData}"/>
             <MenuItem Header="Открыть файл" Command="{Binding OpenFile}"/>
         </MenuItem>
+        <MenuItem Header="Изображение...">
+            <MenuItem Header="Вставить фоновое изображение" Command="{Binding InsertBackground}" />
+            <MenuItem Header="Отчистить фон" Command="{Binding ResetBackground}" />
+        </MenuItem>
     </Menu>
-
 </UserControl>

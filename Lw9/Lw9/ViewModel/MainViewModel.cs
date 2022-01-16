@@ -1,14 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.ComponentModel;
 using Lw9.Model;
 using Lw9.DialogService;
-using System.Collections.ObjectModel;
 using System.Windows.Input;
-using System.Windows;
 using Lw9.HistoryService;
 using System.IO;
 
@@ -16,6 +11,8 @@ namespace Lw9.ViewModel
 {
     public class MainViewModel : INotifyPropertyChanged
     {
+        private const string IMAGE_FOLDER = @"\img\";
+        private const string TEMP_FOLDER = @"\tmp\";
         private CanvasViewModel _canvasVM;
         private ShapeListViewModel _shapeListViewModel;
         private CanvasModel _canvasModel;
@@ -23,11 +20,22 @@ namespace Lw9.ViewModel
         private ICommand? _saveFileCanvasData;
         private ICommand? _saveAsFileCanvasData;
         private ICommand? _openFile;
+        private ICommand? _insertBackground;
+        private ICommand? _resetBackground;
         private History _historyService = new History();
-        private IFileService<ShapeModel> _fileService = new JsonFileService();
+        private IFileServiceObj<CanvasModel> _fileService = new JsonFileService();
         private IDialogService _dialogService = new DefaultDialogService();
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        private void CopyDir(string from, string to)
+        {
+            Directory.CreateDirectory(to);
+            foreach (string file in Directory.GetFiles(from))
+            { 
+                string pathForFile = to + "\\" + Path.GetFileName(file);
+                File.Copy(file, pathForFile, true);
+            }
+        }
         public MainViewModel()
         {
             _canvasModel = new();
@@ -45,7 +53,6 @@ namespace Lw9.ViewModel
                 OnPropertyChanged("Canvas");
             }
         }
-
         public ShapeListViewModel ShapeInfoVM
         {
             get => _shapeListViewModel;
@@ -57,10 +64,13 @@ namespace Lw9.ViewModel
             {
                 try
                 {
-                    var data = _canvasModel.Shapes;
+                    var data = _canvasModel;
                     if (_dialogService.SaveFileDialog())
                     {
-                        _fileService.SaveCollection(_dialogService.FilePath, data.ToList());
+                        string saveImageFolder = Path.GetDirectoryName(_dialogService.FilePath) + IMAGE_FOLDER;
+                        Directory.CreateDirectory(saveImageFolder);
+                        CopyDir(Environment.CurrentDirectory + IMAGE_FOLDER, saveImageFolder);
+                        _fileService.Save(_dialogService.FilePath, data);
                         _dialogService.ShowMessage("Файл сохранен");
                         _lastSavePath = _dialogService.FilePath;
                     }
@@ -81,8 +91,11 @@ namespace Lw9.ViewModel
                     return;
                 }
 
-                var data = _canvasModel.Shapes;
-                _fileService.SaveCollection(_lastSavePath, data.ToList());
+                string saveImageFolder = Path.GetDirectoryName(_dialogService.FilePath) + IMAGE_FOLDER;
+                Directory.CreateDirectory(saveImageFolder);
+                CopyDir(Environment.CurrentDirectory + IMAGE_FOLDER, saveImageFolder);
+                var data = _canvasModel;
+                _fileService.Save(_lastSavePath, data);
                 _dialogService.ShowMessage("Файл сохранен");
 
             }));
@@ -91,29 +104,79 @@ namespace Lw9.ViewModel
         {
             get => _openFile ?? (_openFile = new DelegateCommand(x =>
             {
+                GC.Collect();
+                string? oldPicture = _canvasModel.PicturePath;
                 try
                 {
-                    if (_dialogService.OpenFileDialog())
+                    if (_dialogService.OpenFileDialog("Files|*.json;"))
                     {
-                        _canvasVM.Shapes.Clear();
+                        var fileData = _fileService.Open(_dialogService.FilePath);
+
+                        string openFileDirectory = Path.GetDirectoryName(_dialogService.FilePath)!;
+                        if (fileData.PicturePath == oldPicture)
+                        {
+                            Directory.CreateDirectory(Environment.CurrentDirectory + TEMP_FOLDER);
+                            File.Copy(
+                                Environment.CurrentDirectory + _canvasModel.PicturePath,
+                                Environment.CurrentDirectory + TEMP_FOLDER + Path.GetFileName(_canvasModel.PicturePath), true);
+                        }
+                        if (!Directory.Exists(openFileDirectory + IMAGE_FOLDER)) 
+                            throw new Exception($"Не удалось найти папку \"{IMAGE_FOLDER}\"");
+                        if (!File.Exists(openFileDirectory + fileData.PicturePath))
+                            throw new Exception($"не удалось найти файл \"{fileData.PicturePath}\"");
+
                         _canvasModel.Shapes.Clear();
-                        _shapeListViewModel.Shapes.Clear();
-                        var fileShapesData = _fileService.OpenCollection(_dialogService.FilePath);
-                        foreach (ShapeModel shape in fileShapesData)
+                        _canvasModel.Height = fileData.Height;
+                        _canvasModel.Width = fileData.Width;
+                        _historyService.ClearHistory();
+                        CopyDir(openFileDirectory + IMAGE_FOLDER, Environment.CurrentDirectory + IMAGE_FOLDER);
+                        _canvasModel.PicturePath = fileData.PicturePath;
+                        foreach (ShapeModel shape in fileData.Shapes)
                         {
                             _canvasModel.Shapes.Add(shape);
                         }
                         CanvasVM.ResetSelect();
                         _dialogService.ShowMessage("Файл открыт");
-                        _historyService.ClearHistory();
                     }
                 }
                 catch(Exception ex)
                 {
+                    if (_canvasModel.PicturePath != null)
+                        File.Copy(
+                            Environment.CurrentDirectory + TEMP_FOLDER + Path.GetFileName(_canvasModel.PicturePath), 
+                            Environment.CurrentDirectory + _canvasModel.PicturePath, true);
+                    _canvasModel.PicturePath = oldPicture;
                     _dialogService.ShowMessage(ex.Message);
                 }
 
             }));
+        }
+        public ICommand InsertBackground
+        {
+            get => _insertBackground ?? (_insertBackground = new DelegateCommand(s =>
+            {
+                try
+                {
+                    if (_dialogService.OpenFileDialog("Files|*.jpg;*.png;"))
+                    {
+                        string filePath = _dialogService.FilePath;
+                        File.Copy(filePath, Environment.CurrentDirectory + IMAGE_FOLDER + _dialogService.FileName, true);
+                        _historyService.AddToHistory(
+                            new ChangeBackgroundCommand(_canvasModel, IMAGE_FOLDER + _dialogService.FileName));
+                    }
+                }
+                catch (Exception ex)
+                {
+                    _dialogService.ShowMessage(ex.Message);
+                }
+            }));
+        }
+        public ICommand ResetBackground
+        {
+            get => _resetBackground ?? (_resetBackground = new DelegateCommand(s =>
+            {
+                _historyService.AddToHistory(new ChangeBackgroundCommand(_canvasModel, null));
+            }, s => _canvasModel.PicturePath != null));
         }
         public History History
         {

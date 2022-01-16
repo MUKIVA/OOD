@@ -1,15 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
-using Lw9.Model;
 using Lw9.ViewModel;
-using System.Windows.Shapes;
 
 namespace Lw9.View
 {
@@ -44,17 +37,17 @@ namespace Lw9.View
         #region dropCommandProperty
 
         // Регистрация свойства для получения комманды
-        public static readonly DependencyProperty ItemDroppedProperty = DependencyProperty.RegisterAttached(
+        public static readonly DependencyProperty DroppedCommandProperty = DependencyProperty.RegisterAttached(
             "DroppedCommand", typeof(ICommand), typeof(DragDrop), new PropertyMetadata());
 
         public static ICommand GetDroppedCommand(DependencyObject element)
         {
-            return (ICommand)element.GetValue(ItemDroppedProperty);
+            return (ICommand)element.GetValue(DroppedCommandProperty);
         }
 
         public static void SetDroppedCommand(DependencyObject element, ICommand value)
         {
-            element.SetValue(ItemDroppedProperty, value);
+            element.SetValue(DroppedCommandProperty, value);
         }
 
         #endregion

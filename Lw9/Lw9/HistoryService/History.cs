@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 using System.Windows.Input;
+using System;
 
 namespace Lw9.HistoryService
 {
@@ -18,6 +13,9 @@ namespace Lw9.HistoryService
 
         static Stack<IUnduableCommand> redoHistory
             = new Stack<IUnduableCommand>();
+
+        public bool CanUndo() => undoHistory.Count > 0;
+        public bool CanRedo() => redoHistory.Count > 0;
 
         static void Undo()
         {
@@ -38,6 +36,7 @@ namespace Lw9.HistoryService
         public void AddToHistory(IUnduableCommand command)
         {
             redoHistory.Clear();
+            GC.Collect();
             command.Execute();
             undoHistory.Push(command);
         }
@@ -46,25 +45,24 @@ namespace Lw9.HistoryService
         {
             redoHistory.Clear();
             undoHistory.Clear();
+            GC.Collect();
         }
-
         private ICommand? _undoCommand;
         private ICommand? _redoCommand;
 
-        // Команды, которые можно выставлять в GUI
         public ICommand? UndoCommand
         {
             get => _undoCommand ?? (_undoCommand = new DelegateCommand(_ => 
             {
                 Undo();
-            }, _ => undoHistory.Count > 0 ));
+            }, _ => CanUndo() ));
         }
         public ICommand? RedoCommand
         {
             get => _redoCommand ?? (_redoCommand = new DelegateCommand(_ =>
             {
                 Redo();
-            }, _ => redoHistory.Count > 0));
+            }, _ => CanRedo() ));
         }
     }
 }

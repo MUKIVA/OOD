@@ -1,26 +1,34 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using System.Collections.ObjectModel;
+using System.Windows.Media;
+using System;
+using System.Windows.Media.Imaging;
 
 namespace Lw9.Model
 {
     public class CanvasModel : INotifyPropertyChanged
     {
         private ObservableCollection<ShapeModel> _shapes = new();
+        private string? _picturePath = null;
         private int _height;
         private int _width;
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        public string? PicturePath
+        {
+            get => _picturePath;
+            set
+            {
+                if (value == _picturePath) return;
+                _picturePath = value;
+                OnPropertyChanged("PicturePath");
+            }
+        }
         public CanvasModel()
         {
             _height = 480;
             _width = 640;
         }
-
         public ObservableCollection<ShapeModel> Shapes
         {
             get { return _shapes; }
@@ -43,13 +51,6 @@ namespace Lw9.Model
                 if (_width == value) return;
                 _width = value;
                 OnPropertyChanged("Width");
-            }
-        }
-        public void RemoveShapeByIndex(int index)
-        {
-            if (index >= 0 && index < Shapes.Count)
-            {
-                Shapes.Remove(Shapes[index]);
             }
         }
 

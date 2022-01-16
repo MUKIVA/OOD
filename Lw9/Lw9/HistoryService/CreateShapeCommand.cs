@@ -1,10 +1,5 @@
 ﻿using Lw9.Model;
 using Lw9.ViewModel;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Lw9.HistoryService
 {

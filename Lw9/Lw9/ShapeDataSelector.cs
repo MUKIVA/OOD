@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Lw9.Model;
-using Lw9.Common;
+﻿using Lw9.Common;
 using System.Windows;
 using System.Windows.Controls;
 using Lw9.ViewModel;

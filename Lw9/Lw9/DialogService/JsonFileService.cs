@@ -1,34 +1,53 @@
 ﻿using Lw9.Model;
-using Lw9.ViewModel;
-using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Runtime.Serialization.Json;
 using System.IO;
 
 namespace Lw9.DialogService
 {
-    public class JsonFileService : IFileService<ShapeModel>
+    //public class JsonFileService : IFileService<ShapeModel>
+    //{
+    //    public List<ShapeModel> OpenCollection(string filePath)
+    //    {
+    //        List<ShapeModel>? shapes = new();
+    //        DataContractJsonSerializer jsonFormatter =
+    //            new DataContractJsonSerializer(typeof(List<ShapeModel>));
+    //        using (FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate))
+    //        {
+    //            shapes = jsonFormatter.ReadObject(fs) as List<ShapeModel>;
+    //        }
+
+    //        return shapes!;
+    //    }
+
+    //    public void SaveCollection(string filePath, List<ShapeModel> data)
+    //    {
+    //        DataContractJsonSerializer jsonFormater = new DataContractJsonSerializer(typeof(List<ShapeModel>));
+    //        using (FileStream fs = new FileStream(filePath, FileMode.Create))
+    //        {
+    //            jsonFormater.WriteObject(fs, data);
+    //        }
+    //    }
+    //}
+
+    public class JsonFileService : IFileServiceObj<CanvasModel>
     {
-        public List<ShapeModel> OpenCollection(string filePath)
+        public CanvasModel Open(string filePath)
         {
-            List<ShapeModel>? shapes = new();
+            CanvasModel? canvas = null;
             DataContractJsonSerializer jsonFormatter =
-                new DataContractJsonSerializer(typeof(List<ShapeModel>));
+                new DataContractJsonSerializer(typeof(CanvasModel));
             using (FileStream fs = new FileStream(filePath, FileMode.OpenOrCreate))
             {
-                shapes = jsonFormatter.ReadObject(fs) as List<ShapeModel>;
+                canvas = jsonFormatter.ReadObject(fs) as CanvasModel;
             }
 
-            return shapes!;
+            return canvas!;
         }
 
-        public void SaveCollection(string filePath, List<ShapeModel> data)
+        public void Save(string filePath, CanvasModel data)
         {
-            DataContractJsonSerializer jsonFormater = new DataContractJsonSerializer(typeof(List<ShapeModel>));
+            DataContractJsonSerializer jsonFormater = new DataContractJsonSerializer(typeof(CanvasModel));
             using (FileStream fs = new FileStream(filePath, FileMode.Create))
             {
                 jsonFormater.WriteObject(fs, data);
