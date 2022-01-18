@@ -15,14 +15,15 @@ namespace Lw9.ViewModel
         private const string TEMP_FOLDER = @"\tmp\";
         private CanvasViewModel _canvasVM;
         private ShapeListViewModel _shapeListViewModel;
-        private CanvasModel _canvasModel;
+        private DocumentModel _documentModel;
         private string _lastSavePath = string.Empty;
         private ICommand? _saveFileCanvasData;
         private ICommand? _saveAsFileCanvasData;
         private ICommand? _openFile;
         private ICommand? _insertBackground;
         private ICommand? _resetBackground;
-        private History _historyService = new History();
+        private ICommand? _undo;
+        private ICommand? _redo;
         private IFileServiceObj<CanvasModel> _fileService = new JsonFileService();
         private IDialogService _dialogService = new DefaultDialogService();
         public event PropertyChangedEventHandler? PropertyChanged;
@@ -38,10 +39,11 @@ namespace Lw9.ViewModel
         }
         public MainViewModel()
         {
-            _canvasModel = new();
-            SelectedShapeViewModel selectedShapeVM = new(_historyService);
-            _shapeListViewModel = new ShapeListViewModel(_canvasModel, selectedShapeVM);
-            _canvasVM = new CanvasViewModel(_canvasModel, selectedShapeVM, _historyService);
+            _documentModel = new DocumentModel(new History(), new CanvasModel());
+
+            SelectedShapeViewModel selectedShapeVM = new(_documentModel);
+            _shapeListViewModel = new ShapeListViewModel(_documentModel, selectedShapeVM);
+            _canvasVM = new CanvasViewModel(selectedShapeVM, _documentModel);
         }
         public CanvasViewModel CanvasVM
         {
@@ -64,7 +66,7 @@ namespace Lw9.ViewModel
             {
                 try
                 {
-                    var data = _canvasModel;
+                    var data = _documentModel.CanvasModel;
                     if (_dialogService.SaveFileDialog())
                     {
                         string saveImageFolder = Path.GetDirectoryName(_dialogService.FilePath) + IMAGE_FOLDER;
@@ -94,7 +96,7 @@ namespace Lw9.ViewModel
                 string saveImageFolder = Path.GetDirectoryName(_dialogService.FilePath) + IMAGE_FOLDER;
                 Directory.CreateDirectory(saveImageFolder);
                 CopyDir(Environment.CurrentDirectory + IMAGE_FOLDER, saveImageFolder);
-                var data = _canvasModel;
+                var data = _documentModel.CanvasModel;
                 _fileService.Save(_lastSavePath, data);
                 _dialogService.ShowMessage("Файл сохранен");
 
@@ -105,7 +107,7 @@ namespace Lw9.ViewModel
             get => _openFile ?? (_openFile = new DelegateCommand(x =>
             {
                 GC.Collect();
-                string? oldPicture = _canvasModel.PicturePath;
+                string? oldPicture = _documentModel.CanvasModel.PicturePath;
                 try
                 {
                     if (_dialogService.OpenFileDialog("Files|*.json;"))
@@ -113,27 +115,27 @@ namespace Lw9.ViewModel
                         var fileData = _fileService.Open(_dialogService.FilePath);
 
                         string openFileDirectory = Path.GetDirectoryName(_dialogService.FilePath)!;
-                        if (fileData.PicturePath == oldPicture)
+                        if (fileData.PicturePath == oldPicture && oldPicture != null)
                         {
                             Directory.CreateDirectory(Environment.CurrentDirectory + TEMP_FOLDER);
                             File.Copy(
-                                Environment.CurrentDirectory + _canvasModel.PicturePath,
-                                Environment.CurrentDirectory + TEMP_FOLDER + Path.GetFileName(_canvasModel.PicturePath), true);
+                                Environment.CurrentDirectory + _documentModel.CanvasModel.PicturePath,
+                                Environment.CurrentDirectory + TEMP_FOLDER + Path.GetFileName(_documentModel.CanvasModel.PicturePath), true);
                         }
                         if (!Directory.Exists(openFileDirectory + IMAGE_FOLDER)) 
                             throw new Exception($"Не удалось найти папку \"{IMAGE_FOLDER}\"");
-                        if (!File.Exists(openFileDirectory + fileData.PicturePath))
+                        if (!File.Exists(openFileDirectory + fileData.PicturePath) && fileData.PicturePath != null)
                             throw new Exception($"не удалось найти файл \"{fileData.PicturePath}\"");
 
-                        _canvasModel.Shapes.Clear();
-                        _canvasModel.Height = fileData.Height;
-                        _canvasModel.Width = fileData.Width;
-                        _historyService.ClearHistory();
+                        _documentModel.CanvasModel.Shapes.Clear();
+                        _documentModel.CanvasModel.Height = fileData.Height;
+                        _documentModel.CanvasModel.Width = fileData.Width;
+                        _documentModel?.History?.ClearHistory();
                         CopyDir(openFileDirectory + IMAGE_FOLDER, Environment.CurrentDirectory + IMAGE_FOLDER);
-                        _canvasModel.PicturePath = fileData.PicturePath;
+                        _documentModel!.CanvasModel.PicturePath = fileData.PicturePath;
                         foreach (ShapeModel shape in fileData.Shapes)
                         {
-                            _canvasModel.Shapes.Add(shape);
+                            _documentModel.CanvasModel.Shapes.Add(shape);
                         }
                         CanvasVM.ResetSelect();
                         _dialogService.ShowMessage("Файл открыт");
@@ -141,11 +143,11 @@ namespace Lw9.ViewModel
                 }
                 catch(Exception ex)
                 {
-                    if (_canvasModel.PicturePath != null)
+                    if (_documentModel.CanvasModel.PicturePath != null)
                         File.Copy(
-                            Environment.CurrentDirectory + TEMP_FOLDER + Path.GetFileName(_canvasModel.PicturePath), 
-                            Environment.CurrentDirectory + _canvasModel.PicturePath, true);
-                    _canvasModel.PicturePath = oldPicture;
+                            Environment.CurrentDirectory + TEMP_FOLDER + Path.GetFileName(_documentModel.CanvasModel.PicturePath), 
+                            Environment.CurrentDirectory + _documentModel.CanvasModel.PicturePath, true);
+                    _documentModel.CanvasModel.PicturePath = oldPicture;
                     _dialogService.ShowMessage(ex.Message);
                 }
 
@@ -161,8 +163,8 @@ namespace Lw9.ViewModel
                     {
                         string filePath = _dialogService.FilePath;
                         File.Copy(filePath, Environment.CurrentDirectory + IMAGE_FOLDER + _dialogService.FileName, true);
-                        _historyService.AddToHistory(
-                            new ChangeBackgroundCommand(_canvasModel, IMAGE_FOLDER + _dialogService.FileName));
+                        _documentModel?.History?.AddToHistory(
+                            new ChangeBackgroundCommand(_documentModel.CanvasModel, IMAGE_FOLDER + _dialogService.FileName));
                     }
                 }
                 catch (Exception ex)
@@ -175,18 +177,22 @@ namespace Lw9.ViewModel
         {
             get => _resetBackground ?? (_resetBackground = new DelegateCommand(s =>
             {
-                _historyService.AddToHistory(new ChangeBackgroundCommand(_canvasModel, null));
-            }, s => _canvasModel.PicturePath != null));
+                _documentModel?.History?.AddToHistory(new ChangeBackgroundCommand(_documentModel.CanvasModel, null));
+            }, s => _documentModel.CanvasModel.PicturePath != null));
         }
-        public History History
+        public ICommand Undo
         {
-            get => _historyService;
-            set
+            get => _undo ?? (_undo = new DelegateCommand(obj =>
             {
-                if (_historyService == value) return;
-                _historyService = value;
-                OnPropertyChanged("History");   
-            }
+                _documentModel.History!.Undo();
+            }, obj => _documentModel.History!.CanUndo()));
+        }
+        public ICommand Redo
+        {
+            get => _redo ?? (_redo = new DelegateCommand(obj =>
+            {
+                _documentModel.History!.Redo();
+            }, obj => _documentModel.History!.CanRedo()));
         }
         void OnPropertyChanged(string propertyName) => PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
     }

@@ -12,12 +12,11 @@ namespace Lw9.ViewModel
         private ObservableCollection<ShapeViewModel> _shapes = new();
         public event PropertyChangedEventHandler? PropertyChanged;
 
-        public ShapeListViewModel(CanvasModel canvasModel, SelectedShapeViewModel selectedShape)
+        public ShapeListViewModel(DocumentModel document, SelectedShapeViewModel selectedShape)
         {
             _selectedShapeViewModel = selectedShape;
-            _canvasModel = canvasModel;
+            _canvasModel = document.CanvasModel;
             _canvasModel.Shapes.CollectionChanged += HandleCollectionChanged;
-            //_selectedShapeViewModel.PropertyChanged += (s, e) => { if (e.PropertyName == "SelectedShape") OnPropertyChanged("SelectedShape"); };
         }
         private void HandleCollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
         {

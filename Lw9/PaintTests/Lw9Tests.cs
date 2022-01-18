@@ -582,7 +582,7 @@ namespace PaintTests
         public void UndoTest()
         {
             _history.AddToHistory(new MockUnduableCommand());
-            _history.UndoCommand.Execute(null);
+            _history.Undo();
             Assert.True(_history.CanRedo());
         }
 
@@ -590,8 +590,8 @@ namespace PaintTests
         public void RedoTest()
         {
             _history.AddToHistory(new MockUnduableCommand());
-            _history.UndoCommand.Execute(null);
-            _history.RedoCommand.Execute(null);
+            _history.Undo();
+            _history.Redo();
             Assert.True(_history.CanUndo());
         }
     }

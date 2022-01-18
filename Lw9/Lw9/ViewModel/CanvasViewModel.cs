@@ -13,8 +13,6 @@ namespace Lw9.ViewModel
 {
     public class CanvasViewModel : INotifyPropertyChanged, ISelectField
     {
-        
-        private CanvasModel _canvasModel;
         private ObservableCollection<ShapeViewModel> _shapes = new();
         private SelectedShapeViewModel _selectedShapeViewModel;
         private ICommand? _resetSelectionShape;
@@ -23,33 +21,32 @@ namespace Lw9.ViewModel
         private ICommand? _addRectangle;
         private ICommand? _addEllipse;
         private ICommand? _deleteShape;
-        private History? _history;
+        private DocumentModel _document;
         public event PropertyChangedEventHandler? PropertyChanged;
-        public CanvasViewModel(CanvasModel canvasModel, SelectedShapeViewModel selectedShapeVM, History? history = null)
+        public CanvasViewModel(SelectedShapeViewModel selectedShapeVM, DocumentModel document)
         {
-            _history = history;
-            _canvasModel = canvasModel;
+            _document = document;
             _selectedShapeViewModel = selectedShapeVM;
-            _canvasModel.PropertyChanged += (s, e) => { if (e.PropertyName == "Width") OnPropertyChanged("Width");             };
-            _canvasModel.PropertyChanged += (s, e) => { if (e.PropertyName == "Height") OnPropertyChanged("Height");           };
-            _canvasModel.PropertyChanged += (s, e) => { if (e.PropertyName == "PicturePath") OnPropertyChanged("ImageSource"); };
-            _canvasModel.Shapes.CollectionChanged += HandleCollectionChanged;
+            document.CanvasModel.PropertyChanged += (s, e) => { if (e.PropertyName == "Width") OnPropertyChanged("Width");             };
+            document.CanvasModel.PropertyChanged += (s, e) => { if (e.PropertyName == "Height") OnPropertyChanged("Height");           };
+            document.CanvasModel.PropertyChanged += (s, e) => { if (e.PropertyName == "PicturePath") OnPropertyChanged("ImageSource"); };
+            document.CanvasModel.Shapes.CollectionChanged += HandleCollectionChanged;
         }
         public string? PicturePath
         {
-            get => _canvasModel.PicturePath;
-            set => _canvasModel.PicturePath = value;
+            get => _document.CanvasModel.PicturePath;
+            set => _document.CanvasModel.PicturePath = value;
         }
         public BitmapSource ImageSource
         {
             get
             {
-                if (_canvasModel.PicturePath == null)
+                if (_document.CanvasModel.PicturePath == null)
                     return BitmapImage.Create(1, 1, 1, 1, PixelFormats.BlackWhite, null, new byte[] { 255 }, 1);
 
                 var image = new BitmapImage();
                 image.BeginInit();
-                image.UriSource = new Uri(Environment.CurrentDirectory + _canvasModel.PicturePath);
+                image.UriSource = new Uri(Environment.CurrentDirectory + _document.CanvasModel.PicturePath);
                 image.EndInit();
                 
                 byte[] pixels = new byte[image.PixelHeight * image.PixelWidth * 4];
@@ -107,13 +104,13 @@ namespace Lw9.ViewModel
         }
         public int Height
         {
-            get => _canvasModel.Height;
-            set => _canvasModel.Height = value;
+            get => _document.CanvasModel.Height;
+            set => _document.CanvasModel.Height = value;
         }
         public int Width
         {
-            get => _canvasModel.Width;
-            set => _canvasModel.Width = value;
+            get => _document.CanvasModel.Width;
+            set => _document.CanvasModel.Width = value;
         }
         public ICommand DeleteShape
         {
@@ -121,10 +118,10 @@ namespace Lw9.ViewModel
             {
                 if (SelectedShapeVM.SelectedShape == null) return;
                 int index = _shapes.IndexOf(SelectedShapeVM.SelectedShape);
-                if (_history != null)
-                    _history?.AddToHistory(new DeleteShapeCommand(_canvasModel, index));
+                if (_document != null)
+                    _document?.History?.AddToHistory(new DeleteShapeCommand(_document.CanvasModel, index));
                 else
-                    _canvasModel.Shapes.Remove(_canvasModel.Shapes[index]);
+                    _document?.CanvasModel.Shapes.Remove(_document.CanvasModel.Shapes[index]);
                 _selectedShapeViewModel.SelectedShape = null;
 
             }, (x) => _selectedShapeViewModel.SelectedShape != null));
@@ -135,14 +132,14 @@ namespace Lw9.ViewModel
             {
                 return _addTriangle ?? (_addTriangle = new DelegateCommand(obj =>
                 {
-                    if (_history != null)
+                    if (_document != null)
                     {
-                        _history?.AddToHistory(new CreateShapeCommand(
-                            _canvasModel, new ShapeModel(Common.ShapeType.Triangle, 100, 100, 100, 100), SelectedShapeVM));
+                        _document?.History?.AddToHistory(new CreateShapeCommand(
+                            _document.CanvasModel, new ShapeModel(Common.ShapeType.Triangle, 100, 100, 100, 100), SelectedShapeVM));
                     }
                     else
                     {
-                        _canvasModel.Shapes.Add(new ShapeModel(Common.ShapeType.Triangle, 100, 100, 100, 100));
+                        _document?.CanvasModel.Shapes.Add(new ShapeModel(Common.ShapeType.Triangle, 100, 100, 100, 100));
                     }
                 }));
             }
@@ -153,14 +150,14 @@ namespace Lw9.ViewModel
             {
                 return _addRectangle ?? (_addRectangle = new DelegateCommand(obj =>
                 {
-                    if (_history != null)
+                    if (_document != null)
                     {
-                        _history?.AddToHistory(new CreateShapeCommand(
-                            _canvasModel, new ShapeModel(Common.ShapeType.Rectangle, 100, 100, 100, 100), SelectedShapeVM));
+                        _document?.History?.AddToHistory(new CreateShapeCommand(
+                            _document.CanvasModel, new ShapeModel(Common.ShapeType.Rectangle, 100, 100, 100, 100), SelectedShapeVM));
                     }
                     else
                     {
-                        _canvasModel.Shapes.Add(new ShapeModel(Common.ShapeType.Rectangle, 100, 100, 100, 100));
+                        _document?.CanvasModel.Shapes.Add(new ShapeModel(Common.ShapeType.Rectangle, 100, 100, 100, 100));
                     }
                 }));
             }
@@ -171,14 +168,14 @@ namespace Lw9.ViewModel
             {
                 return _addEllipse ?? (_addEllipse = new DelegateCommand(obj =>
                 {
-                    if (_history != null)
+                    if (_document != null)
                     {
-                        _history?.AddToHistory(new CreateShapeCommand(
-                            _canvasModel, new ShapeModel(Common.ShapeType.Ellipse, 100, 100, 100, 100), SelectedShapeVM));
+                        _document?.History?.AddToHistory(new CreateShapeCommand(
+                            _document.CanvasModel, new ShapeModel(Common.ShapeType.Ellipse, 100, 100, 100, 100), SelectedShapeVM));
                     }
                     else
                     {
-                        _canvasModel.Shapes.Add(new ShapeModel(Common.ShapeType.Ellipse, 100, 100, 100, 100));
+                        _document?.CanvasModel.Shapes.Add(new ShapeModel(Common.ShapeType.Ellipse, 100, 100, 100, 100));
                     }
                 }));
             }

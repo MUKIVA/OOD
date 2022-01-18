@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using Lw9.HistoryService;
+using Lw9.Model;
 using System.Windows.Input;
 
 namespace Lw9.ViewModel
@@ -8,14 +9,14 @@ namespace Lw9.ViewModel
     {
         private ShapeViewModel? _selectedShape;
         public event PropertyChangedEventHandler? PropertyChanged;
-        private History? _history;
+        private DocumentModel? _document;
         private ICommand? _savePosition;
         private ICommand? _saveResize;
 
 
-        public SelectedShapeViewModel(History? historyService = null)
+        public SelectedShapeViewModel(DocumentModel? historyService = null)
         {
-            _history = historyService;
+            _document = historyService;
         }
 
         public ShapeViewModel? SelectedShape
@@ -36,7 +37,7 @@ namespace Lw9.ViewModel
 
                 if (args.OldPos.X == SelectedShape?.CanvasLeft && args.OldPos.Y == SelectedShape.CanvasTop) return;
 
-                _history?.AddToHistory(
+                 _document?.History?.AddToHistory(
                     new ChangeFrameCommand(
                         SelectedShape!,
                         args.OldPos,
@@ -55,7 +56,7 @@ namespace Lw9.ViewModel
                 && args.OldHeight == SelectedShape.Height
                 && args.OldWidth == SelectedShape.Width) return;
 
-                _history?.AddToHistory(
+                _document?.History?.AddToHistory(
                     new ChangeFrameCommand(
                         SelectedShape!,
                         args.OldPos,

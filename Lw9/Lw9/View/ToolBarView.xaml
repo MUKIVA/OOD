@@ -21,9 +21,9 @@
             <Button Foreground="White" Background="#444" BorderThickness="0" Padding="5" FontWeight="Bold" Margin="0 0 0 10" Height="50" FontSize="15" 
                     Command="{Binding CanvasVM.DeleteShape }">Удалить</Button>
             <Button Foreground="White" Background="#444" BorderThickness="0" Padding="5" FontWeight="Bold" Margin="0 0 0 10" Height="50" FontSize="15" 
-                    Command="{Binding History.UndoCommand }">Undo</Button>
+                    Command="{Binding Undo }">Undo</Button>
             <Button Foreground="White" Background="#444" BorderThickness="0" Padding="5" FontWeight="Bold" Margin="0 0 0 10" Height="50" FontSize="15" 
-                    Command="{Binding History.RedoCommand }">Redo</Button>
+                    Command="{Binding Redo }">Redo</Button>
         </StackPanel>
     </Border>
 </UserControl>

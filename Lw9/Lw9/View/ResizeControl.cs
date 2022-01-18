@@ -128,7 +128,7 @@ namespace Lw9.View
             if (element == null) return;
 
             _frameContainer = GetFrameContainer(_sourceObject!);                // Получаем контейнер фрейма
-            _dragContainer = GetDragContainer(_sourceObject!);                // Получаем доступ к области перемещения
+            _dragContainer = GetDragContainer(_sourceObject!);                  // Получаем доступ к области перемещения
             _initialMousePosition = e.GetPosition(_dragContainer);              // Запоминаем координаты нажатия
 
             _oldPosition.X = Canvas.GetLeft(_frameContainer);                   // Получаем старые значения координат
@@ -137,6 +137,11 @@ namespace Lw9.View
             _oldSize.Y     = _frameContainer.Height; 
 
             if (_dragContainer == null) return;
+
+            _dragContainer!.PreviewMouseMove -= BottomRightHandler;
+            _dragContainer.PreviewMouseMove -= BottomLeftHandler;
+            _dragContainer.PreviewMouseMove -= TopLeftHandler;
+            _dragContainer.PreviewMouseMove -= TopRightHandler;
 
             // В зависимости от нажатого маркера задаем обработчик изменения размера
             if (sender == _bottomRightMarker)

@@ -17,7 +17,7 @@ namespace Lw9.HistoryService
         public bool CanUndo() => undoHistory.Count > 0;
         public bool CanRedo() => redoHistory.Count > 0;
 
-        static void Undo()
+        public void Undo()
         {
             if (undoHistory.Count == 0) return;
             var undo = undoHistory.Pop();
@@ -25,7 +25,7 @@ namespace Lw9.HistoryService
             redoHistory.Push(undo);
         }
 
-        static void Redo()
+        public void Redo()
         {
             if (redoHistory.Count == 0) return;
             var redo = redoHistory.Pop();
@@ -46,23 +46,6 @@ namespace Lw9.HistoryService
             redoHistory.Clear();
             undoHistory.Clear();
             GC.Collect();
-        }
-        private ICommand? _undoCommand;
-        private ICommand? _redoCommand;
-
-        public ICommand? UndoCommand
-        {
-            get => _undoCommand ?? (_undoCommand = new DelegateCommand(_ => 
-            {
-                Undo();
-            }, _ => CanUndo() ));
-        }
-        public ICommand? RedoCommand
-        {
-            get => _redoCommand ?? (_redoCommand = new DelegateCommand(_ =>
-            {
-                Redo();
-            }, _ => CanRedo() ));
         }
     }
 }
